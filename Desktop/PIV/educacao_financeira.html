@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Definições básicas de codificação e responsividade -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA - Educação Financeira</title>
+
+    <!-- Importa o arquivo CSS principal -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header class="header">
+        <!-- Logo do sistema -->
+        <img src="images/lia.png" alt="Logo LIA" class="logo">
+
+        <!-- Botão para voltar ao dashboard -->
+        <nav class="nav">
+            <button class="nav-button" onclick="window.location.href='dashboard.html'">Voltar ao Dashboard</button>
+        </nav>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+        <!-- Título da página -->
+        <h1>📘 Educação Financeira</h1>
+        <p>Aprenda, pratique e domine o mundo das finanças com o LIA!</p>
+
+        <!-- Seção de Conceitos Básicos -->
+        <section class="finance-section">
+            <h2>🔍 Conceitos Básicos</h2>
+            <ul class="list">
+                <li><strong>Juros Compostos:</strong> O poder dos juros sobre juros ao longo do tempo.</li>
+                <li><strong>Orçamento Pessoal:</strong> Como planejar seus gastos e economias.</li>
+                <li><strong>Inflação:</strong> Entenda como a inflação afeta seu poder de compra.</li>
+                <li><strong>Reserva de Emergência:</strong> Importância de ter uma reserva financeira.</li>
+            </ul>
+        </section>
+
+        <!-- Seção de Conceitos Avançados -->
+        <section class="finance-section">
+            <h2>📈 Conceitos Avançados</h2>
+            <ul class="list">
+                <li><strong>Renda Fixa vs. Renda Variável:</strong> Diferenças e aplicações práticas.</li>
+                <li><strong>Portfólio de Investimentos:</strong> Como diversificar para minimizar riscos.</li>
+                <li><strong>Análise Fundamentalista:</strong> Entenda como avaliar empresas na bolsa.</li>
+                <li><strong>Planejamento Tributário:</strong> Estratégias para otimizar impostos.</li>
+            </ul>
+        </section>
+
+        <!-- Seção de Quiz -->
+        <section class="finance-section quiz-section">
+            <h2>🧠 Teste seus conhecimentos</h2>
+            <p>Responda ao quiz abaixo para testar seus conhecimentos sobre finanças:</p>
+            <button class="cta-button" onclick="iniciarQuiz()">🎯 Iniciar Quiz</button>
+            <div id="quiz-area" class="quiz-area"></div>
+        </section>
+
+        <!-- Seção de Recursos Adicionais -->
+        <section class="finance-section">
+            <h2>🌐 Recursos Adicionais</h2>
+            <p>Aprofunde seus conhecimentos com os links abaixo:</p>
+            <ul class="list">
+                <li><a href="https://www.investopedia.com" target="_blank">Investopedia (Inglês)</a></li>
+                <li><a href="https://www.bcb.gov.br" target="_blank">Banco Central do Brasil</a></li>
+                <li><a href="https://valorinveste.globo.com" target="_blank">Valor Investe</a></li>
+                <li><a href="https://www.tesourodireto.com.br" target="_blank">Tesouro Direto</a></li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- Botão flutuante para falar com a IA -->
+    <button class="floating-button" onclick="window.location.href='chat.html'">💬 Fale com o LIA</button>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Script para o Quiz -->
+    <script>
+        /**
+         * Inicia o quiz exibindo uma pergunta com duas opções de resposta.
+         */
+        function iniciarQuiz() {
+            const quizArea = document.getElementById('quiz-area');
+            quizArea.innerHTML = `
+                <p><strong>Pergunta:</strong> O que é um ativo financeiro?</p>
+                <button onclick="responder('correto')" class="cta-button">✅ Algo que gera receita</button>
+                <button onclick="responder('errado')" class="cta-button">❌ Um passivo da empresa</button>
+            `;
+        }
+
+        /**
+         * Exibe o resultado da resposta do usuário.
+         * @param {string} resposta - Se a resposta foi 'correta' ou 'errada'.
+         */
+        function responder(resposta) {
+            const quizArea = document.getElementById('quiz-area');
+
+            if (resposta === 'correto') {
+                quizArea.innerHTML = `<p>✅ Resposta correta! Um ativo financeiro gera receita ou possui valor econômico.</p>`;
+            } else {
+                quizArea.innerHTML = `<p>❌ Resposta errada. Um ativo é algo que gera receita ou tem valor econômico.</p>`;
+            }
+        }
+    </script>
+
+</body>
+</html>

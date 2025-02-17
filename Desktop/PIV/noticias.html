@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Configurações básicas -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA - Notícias Financeiras</title>
+
+    <!-- Estilização da página -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header class="header">
+        <!-- Logo principal -->
+        <img src="images/lia.png" alt="Logo LIA" class="logo">
+
+        <!-- Botão para voltar ao Dashboard -->
+        <nav class="nav">
+            <button class="nav-button" onclick="window.location.href='dashboard.html'">🔙 Voltar ao Dashboard</button>
+        </nav>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+        <!-- Título principal -->
+        <h1>📰 Notícias Financeiras</h1>
+        <p>Mantenha-se atualizado com as últimas novidades do mundo financeiro, organizadas por categorias.</p>
+
+        <!-- Seção de Categorias -->
+        <section class="finance-section">
+            <h2>📑 Categorias</h2>
+            <div class="news-categories">
+                <button class="cta-button" onclick="mostrarNoticias('acoes')">📈 Ações</button>
+                <button class="cta-button" onclick="mostrarNoticias('rendaFixa')">🏦 Renda Fixa</button>
+                <button class="cta-button" onclick="mostrarNoticias('criptoativos')">🪙 Criptoativos</button>
+                <button class="cta-button" onclick="mostrarNoticias('fundos')">🤝 Fundos de Investimento</button>
+                <button class="cta-button" onclick="mostrarNoticias('economiaGlobal')">🌐 Economia Global</button>
+            </div>
+        </section>
+
+        <!-- Seção de Notícias -->
+        <section class="finance-section">
+            <h2>🗞️ Últimas Notícias</h2>
+            <div id="news-container" class="news-container">
+                <p>🔍 Selecione uma categoria acima para exibir as notícias recentes.</p>
+            </div>
+        </section>
+
+        <!-- Seção de Insights da IA -->
+        <section class="finance-section">
+            <h2>🤖 Insights da IA</h2>
+            <p>🧠 Em breve, o LIA fornecerá análises personalizadas com base nas notícias e no seu perfil de investimento.</p>
+        </section>
+    </main>
+
+    <!-- Botão flutuante para falar com a IA -->
+    <button class="floating-button" onclick="window.location.href='chat.html'">💬 Fale com o LIA</button>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Script para carregar notícias -->
+    <script>
+        // Objeto contendo as notícias por categoria
+        const noticias = {
+            acoes: [
+                { titulo: "📈 Mercado de ações em alta", descricao: "Bolsa brasileira sobe 2,5% com otimismo global." },
+                { titulo: "🏛️ Setor bancário se destaca", descricao: "Lucros recordes impulsionam o índice financeiro." }
+            ],
+            rendaFixa: [
+                { titulo: "🏦 Selic mantida em 11,75%", descricao: "Copom sinaliza manutenção por mais trimestres." },
+                { titulo: "💵 Tesouro Direto cresce", descricao: "Investidores buscam segurança em títulos públicos." }
+            ],
+            criptoativos: [
+                { titulo: "🪙 Bitcoin dispara", descricao: "Criptomoeda ultrapassa US$ 70 mil após novo ETF." },
+                { titulo: "🔍 Ethereum atualiza rede", descricao: "Atualização promete reduzir taxas e tempo de transação." }
+            ],
+            fundos: [
+                { titulo: "🤝 Fundos multimercado se destacam", descricao: "Alta de 5% no primeiro semestre." },
+                { titulo: "🏢 Fundos imobiliários em recuperação", descricao: "Setor volta a atrair investidores após crise." }
+            ],
+            economiaGlobal: [
+                { titulo: "🌐 Inflação global recua", descricao: "Projeções indicam estabilidade até o fim do ano." },
+                { titulo: "📉 China enfrenta desafios", descricao: "Exportações caem pelo terceiro mês consecutivo." }
+            ]
+        };
+
+        /**
+         * Função para exibir as notícias de acordo com a categoria selecionada
+         * @param {string} categoria - Categoria das notícias a serem exibidas
+         */
+        function mostrarNoticias(categoria) {
+            const container = document.getElementById('news-container');
+            const listaNoticias = noticias[categoria];
+
+            // Exibe as notícias da categoria selecionada
+            if (listaNoticias && listaNoticias.length > 0) {
+                container.innerHTML = listaNoticias.map(noticia => `
+                    <div class="news-item">
+                        <h3>${noticia.titulo}</h3>
+                        <p>${noticia.descricao}</p>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = `<p>⚠️ Nenhuma notícia disponível para esta categoria.</p>`;
+            }
+        }
+    </script>
+
+</body>
+</html>

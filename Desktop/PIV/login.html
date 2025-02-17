@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Definindo configurações básicas de codificação e responsividade -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - LIA</title>
+
+    <!-- Importando o arquivo CSS principal -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Cabeçalho com logo e botão de navegação -->
+    <header class="header">
+        <!-- Exibindo a logo -->
+        <img src="images/lia.png" alt="Logo LIA" class="logo">
+
+        <!-- Botão para retornar à página inicial -->
+        <nav class="nav">
+            <button class="nav-button" style="font-size: 1.5em;" onclick="window.location.href='index.html'">🏠 Home</button>
+        </nav>
+    </header>
+
+    <!-- Área de Login -->
+    <main class="main-content">
+        <!-- Título principal -->
+        <h1>🔐 Entrar no LIA</h1>
+
+        <!-- Formulário de login -->
+        <form class="login-form" onsubmit="return validarLogin()">
+            <!-- Campo para o e-mail -->
+            <input type="email" id="email" placeholder="📧 Digite seu e-mail" required class="input-field">
+
+            <!-- Campo para a senha -->
+            <input type="password" id="senha" placeholder="🔑 Digite sua senha" required class="input-field">
+
+            <!-- Botão para acessar -->
+            <button type="submit" class="cta-button">🚀 Entrar</button>
+        </form>
+
+        <!-- Exibição de mensagens de status -->
+        <div id="login-status" class="status-msg"></div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Script para validar o login -->
+    <script>
+        /**
+         * Função para validar o login do usuário.
+         * Simulação simples com dados fixos.
+         */
+        function validarLogin() {
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const statusMsg = document.getElementById('login-status');
+
+            // Simulação de usuário válido (trocar para validação dinâmica futuramente)
+            const emailValido = 'usuario@lia.com';
+            const senhaValida = '12345';
+
+            // Verifica as credenciais
+            if (email === emailValido && senha === senhaValida) {
+                statusMsg.textContent = '✅ Login bem-sucedido! Redirecionando...';
+                statusMsg.style.color = 'green';
+
+                // Redireciona para o dashboard após 1 segundo
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+
+                return false; // Evita o envio padrão do formulário
+            } else {
+                statusMsg.textContent = '❌ E-mail ou senha incorretos!';
+                statusMsg.style.color = 'red';
+                return false;
+            }
+        }
+    </script>
+
+</body>
+</html>

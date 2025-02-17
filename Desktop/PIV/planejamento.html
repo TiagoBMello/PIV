@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Configurações básicas -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA - Planejamento Financeiro</title>
+
+    <!-- Estilização da página -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Biblioteca para o gráfico -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header class="header">
+        <!-- Logo principal -->
+        <img src="images/lia.png" alt="Logo LIA" class="logo">
+
+        <!-- Botão de navegação -->
+        <nav class="nav">
+            <button class="nav-button" onclick="window.location.href='dashboard.html'">🔙 Voltar ao Dashboard</button>
+        </nav>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+        <!-- Título principal -->
+        <h1>📅 Planejamento Financeiro</h1>
+        <p>Organize suas finanças e alcance seus objetivos com eficiência.</p>
+
+        <!-- Seção de Metas Financeiras -->
+        <section class="finance-section">
+            <h2>🎯 Defina Suas Metas</h2>
+            <div class="goal-inputs">
+                <input type="text" class="input-field" placeholder="Meta (Ex: Comprar um carro)">
+                <input type="number" class="input-field" placeholder="Valor necessário (R$)">
+                <input type="number" class="input-field" placeholder="Prazo (meses)">
+                <button class="cta-button" onclick="adicionarMeta()">Adicionar Meta</button>
+            </div>
+            <ul id="goal-list" class="list"></ul>
+        </section>
+
+        <!-- Seção de Planejamento Orçamentário -->
+        <section class="finance-section">
+            <h2>💰 Planejamento Orçamentário</h2>
+            <div class="budget-inputs">
+                <input type="number" id="income" class="input-field" placeholder="Renda Mensal (R$)">
+                <input type="number" id="expenses" class="input-field" placeholder="Despesas Mensais (R$)">
+                <input type="number" id="investments" class="input-field" placeholder="Investimentos Mensais (R$)">
+                <button class="cta-button" onclick="calcularPlanejamento()">Calcular Planejamento</button>
+            </div>
+            <div id="budget-result"></div>
+        </section>
+
+        <!-- Seção de Simulação -->
+        <section class="finance-section">
+            <h2>📊 Simulação de Planejamento</h2>
+            <p>Veja a projeção de seu orçamento ao longo do tempo.</p>
+            <canvas id="budgetChart" class="chart"></canvas>
+        </section>
+
+        <!-- Seção de Dicas Personalizadas -->
+        <section class="finance-section">
+            <h2>🤖 Dicas Personalizadas</h2>
+            <p>🧠 O LIA futuramente fornecerá dicas com base no seu planejamento e perfil financeiro.</p>
+        </section>
+    </main>
+
+    <!-- Botão flutuante para falar com a IA -->
+    <button class="floating-button" onclick="window.location.href='chat.html'">💬 Fale com o LIA</button>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Script para funcionalidades -->
+    <script>
+        // Array para armazenar as metas definidas pelo usuário
+        let metas = [];
+
+        /**
+         * Adiciona uma nova meta à lista de metas
+         */
+        function adicionarMeta() {
+            const metaInput = document.querySelector('.goal-inputs input[type="text"]');
+            const valorInput = document.querySelector('.goal-inputs input[type="number"]');
+            const prazoInput = document.querySelectorAll('.goal-inputs input[type="number"]')[1];
+            const listaMetas = document.getElementById('goal-list');
+
+            const meta = metaInput.value;
+            const valor = valorInput.value;
+            const prazo = prazoInput.value;
+
+            if (meta && valor && prazo) {
+                metas.push({ meta, valor, prazo });
+                const item = document.createElement('li');
+                item.textContent = `🎯 ${meta} - 💰 R$${valor} em 📆 ${prazo} meses`;
+                listaMetas.appendChild(item);
+
+                // Limpar campos após adicionar a meta
+                metaInput.value = '';
+                valorInput.value = '';
+                prazoInput.value = '';
+            } else {
+                alert('⚠️ Preencha todos os campos para adicionar a meta.');
+            }
+        }
+
+        /**
+         * Calcula o planejamento mensal e exibe um gráfico de distribuição
+         */
+        function calcularPlanejamento() {
+            const renda = parseFloat(document.getElementById('income').value);
+            const despesas = parseFloat(document.getElementById('expenses').value);
+            const investimentos = parseFloat(document.getElementById('investments').value);
+            const resultado = document.getElementById('budget-result');
+
+            // Verificação dos campos preenchidos
+            if (isNaN(renda) || isNaN(despesas) || isNaN(investimentos)) {
+                resultado.innerHTML = "<p>⚠️ Preencha todos os campos corretamente!</p>";
+                return;
+            }
+
+            // Cálculo do saldo mensal
+            const saldoMensal = renda - (despesas + investimentos);
+            resultado.innerHTML = `<p>📊 Saldo Mensal: <strong>R$${saldoMensal.toFixed(2)}</strong></p>`;
+
+            gerarGrafico(renda, despesas, investimentos);
+        }
+
+        /**
+         * Gera o gráfico de planejamento financeiro usando o Chart.js
+         */
+        function gerarGrafico(renda, despesas, investimentos) {
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+
+            // Destroi o gráfico anterior se existir
+            if (window.budgetChart) window.budgetChart.destroy();
+
+            // Criação do novo gráfico
+            window.budgetChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Renda', 'Despesas', 'Investimentos', 'Saldo'],
+                    datasets: [{
+                        label: 'Planejamento Mensal',
+                        data: [renda, despesas, investimentos, renda - despesas - investimentos],
+                        backgroundColor: ['#28a745', '#dc3545', '#007bff', '#6f42c1']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

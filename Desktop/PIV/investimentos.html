@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Configuração básica de codificação e responsividade -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA - Investimentos</title>
+
+    <!-- Estilização externa -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Biblioteca Chart.js para exibir o gráfico -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header class="header">
+        <!-- Logo principal -->
+        <img src="images/lia.png" alt="Logo LIA" class="logo">
+
+        <!-- Botão para voltar ao dashboard -->
+        <nav class="nav">
+            <button class="nav-button" onclick="window.location.href='dashboard.html'">Voltar ao Dashboard</button>
+        </nav>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+        <!-- Título e introdução -->
+        <h1>📊 Área de Investimentos</h1>
+        <p>Entenda, simule e planeje seus investimentos com o LIA!</p>
+
+        <!-- Seção de Introdução -->
+        <section class="finance-section">
+            <h2>💡 Introdução ao Investimento</h2>
+            <p>Investir é aplicar recursos visando um retorno futuro. Conhecer os principais tipos de investimentos é o primeiro passo para uma decisão segura.</p>
+        </section>
+
+        <!-- Seção de Tipos de Investimentos -->
+        <section class="finance-section">
+            <h2>🗂️ Tipos de Investimentos</h2>
+            <div class="investment-cards">
+                <div class="investment-card">
+                    <h3>🏦 Renda Fixa</h3>
+                    <p>Investimentos com retorno previsível, como Tesouro Direto e CDBs.</p>
+                </div>
+                <div class="investment-card">
+                    <h3>📈 Renda Variável</h3>
+                    <p>Investimentos com retorno variável, como ações e fundos imobiliários.</p>
+                </div>
+                <div class="investment-card">
+                    <h3>🤝 Fundos de Investimento</h3>
+                    <p>Carteiras administradas por gestores profissionais com diversificação automática.</p>
+                </div>
+                <div class="investment-card">
+                    <h3>🪙 Criptoativos</h3>
+                    <p>Ativos digitais, como Bitcoin e Ethereum, com alta volatilidade.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Simulação -->
+        <section class="finance-section">
+            <h2>📉 Simulador de Investimentos</h2>
+            <div class="simulator">
+                <!-- Entradas para simulação -->
+                <input type="number" id="initialValue" class="input-field" placeholder="Valor Inicial (R$)" />
+                <input type="number" id="monthlyContribution" class="input-field" placeholder="Aporte Mensal (R$)" />
+                <input type="number" id="interestRate" class="input-field" placeholder="Taxa de Juros (% ao mês)" />
+                <input type="number" id="months" class="input-field" placeholder="Duração (meses)" />
+
+                <!-- Botão para simular -->
+                <button class="cta-button" onclick="simularInvestimento()">📊 Simular</button>
+
+                <!-- Gráfico de Simulação -->
+                <canvas id="investmentChart" class="chart"></canvas>
+            </div>
+        </section>
+
+        <!-- Seção de Dicas da IA -->
+        <section class="finance-section">
+            <h2>🤖 Dicas Personalizadas</h2>
+            <p>Em breve, o LIA analisará seu perfil e oferecerá sugestões de investimentos!</p>
+        </section>
+    </main>
+
+    <!-- Botão flutuante para acessar o chat com o LIA -->
+    <button class="floating-button" onclick="window.location.href='chat.html'">💬 Fale com o LIA</button>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Script para simulação de investimento -->
+    <script>
+        /**
+         * Função para simular o investimento com base nos dados fornecidos.
+         */
+        function simularInvestimento() {
+            // Captura os valores informados pelo usuário
+            const initialValue = parseFloat(document.getElementById('initialValue').value);
+            const monthlyContribution = parseFloat(document.getElementById('monthlyContribution').value);
+            const interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+            const months = parseInt(document.getElementById('months').value);
+
+            // Validação básica
+            if (isNaN(initialValue) || isNaN(monthlyContribution) || isNaN(interestRate) || isNaN(months)) {
+                alert('⚠️ Preencha todos os campos corretamente.');
+                return;
+            }
+
+            // Cálculo do investimento ao longo dos meses
+            let valores = [];
+            let valorAtual = initialValue;
+
+            for (let i = 0; i <= months; i++) {
+                valores.push(valorAtual.toFixed(2));
+                valorAtual = (valorAtual + monthlyContribution) * (1 + interestRate);
+            }
+
+            const ctx = document.getElementById('investmentChart').getContext('2d');
+
+            // Destroi o gráfico anterior, se existir, para evitar sobreposição
+            if (window.investmentChart) window.investmentChart.destroy();
+
+            // Cria o novo gráfico de linha com os dados simulados
+            window.investmentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: months + 1 }, (_, i) => `${i + 1} mês(es)`),
+                    datasets: [{
+                        label: 'Evolução do Investimento (R$)',
+                        data: valores,
+                        borderColor: '#006400',
+                        backgroundColor: 'rgba(0, 100, 0, 0.2)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const valor = parseFloat(context.raw).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                    return `Valor acumulado: ${valor}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
