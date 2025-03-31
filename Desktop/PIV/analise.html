@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA - Análise Financeira</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header class="header">
+        <img src="images/lia.png" alt="Logo LIA" class="logo">
+        <nav class="nav">
+            <button class="nav-button" onclick="window.location.href='dashboard.html'">Voltar ao Dashboard</button>
+        </nav>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+        <h1>📊 Análise Financeira</h1>
+        <p>Acompanhe sua evolução financeira ao longo do tempo.</p>
+
+        <!-- Seção de Gráficos -->
+        <section class="analysis-section">
+            <h2>💹 Desempenho Mensal</h2>
+            <div class="analysis-charts">
+                <canvas id="graficoDesempenho" class="analysis-chart"></canvas>
+            </div>
+        </section>
+
+        <section class="analysis-section">
+            <h2>📈 Comparativo de Investimentos</h2>
+            <div class="analysis-charts">
+                <canvas id="graficoInvestimentos" class="analysis-chart"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <!-- Botão flutuante para falar com a IA -->
+    <button class="floating-button" onclick="window.location.href='chat.html'">💬 Fale com o LIA</button>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Scripts para gerar os gráficos -->
+    <script>
+        const ctx1 = document.getElementById('graficoDesempenho').getContext('2d');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                datasets: [{
+                    label: 'Saldo Mensal (R$)',
+                    data: [500, 800, 650, 900, 700, 950],
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('graficoInvestimentos').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['Tesouro Direto', 'Ações', 'Criptoativos', 'Fundos'],
+                datasets: [{
+                    label: 'Valor Investido (R$)',
+                    data: [1200, 900, 400, 600],
+                    backgroundColor: ['#28a745', '#ffc107', '#17a2b8', '#6f42c1']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
