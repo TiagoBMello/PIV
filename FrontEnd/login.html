@@ -50,37 +50,40 @@
 
     <!-- Script para validar o login -->
     <script>
-        /**
-         * Função para validar o login do usuário.
-         * Simulação simples com dados fixos.
-         */
-        function validarLogin() {
+        async function validarLogin() {
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             const statusMsg = document.getElementById('login-status');
-
-            // Simulação de usuário válido (trocar para validação dinâmica futuramente)
-            const emailValido = 'usuario@lia.com';
-            const senhaValida = '12345';
-
-            // Verifica as credenciais
-            if (email === emailValido && senha === senhaValida) {
-                statusMsg.textContent = '✅ Login bem-sucedido! Redirecionando...';
-                statusMsg.style.color = 'green';
-
-                // Redireciona para o dashboard após 1 segundo
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1000);
-
-                return false; // Evita o envio padrão do formulário
-            } else {
-                statusMsg.textContent = '❌ E-mail ou senha incorretos!';
-                statusMsg.style.color = 'red';
-                return false;
+    
+            try {
+                const response = await fetch("http://127.0.0.1:5000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, senha })
+                });
+    
+                const resultado = await response.json();
+    
+                if (response.ok) {
+                    statusMsg.textContent = "✅ Login bem-sucedido! Redirecionando...";
+                    statusMsg.style.color = "green";
+                    setTimeout(() => {
+                        window.location.href = "dashboard.html";
+                    }, 1000);
+                } else {
+                    statusMsg.textContent = "❌ " + resultado.erro;
+                    statusMsg.style.color = "red";
+                }
+            } catch (error) {
+                console.error(error);
+                statusMsg.textContent = "❌ Erro ao tentar fazer login.";
+                statusMsg.style.color = "red";
             }
+    
+            return false;
         }
     </script>
+    
 
 </body>
 </html>

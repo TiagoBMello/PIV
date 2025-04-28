@@ -1,0 +1,28 @@
+[
+    {
+      "pergunta": "O que é inflação?",
+      "alternativas": ["Aumento do poder de compra", "Aumento geral dos preços"],
+      "resposta_correta": "Aumento geral dos preços"
+    },
+    {
+      "pergunta": "O que é diversificação de investimentos?",
+      "alternativas": ["Investir em um único ativo", "Distribuir investimentos em várias opções"],
+      "resposta_correta": "Distribuir investimentos em várias opções"
+    },
+    {
+      "pergunta": "Para que serve uma reserva de emergência?",
+      "alternativas": ["Para pagar dívidas longas", "Para cobrir imprevistos"],
+      "resposta_correta": "Para cobrir imprevistos"
+    },
+    {
+      "pergunta": "O que é um ativo financeiro?",
+      "alternativas": ["Algo que gera receita", "Um passivo da empresa"],
+      "resposta_correta": "Algo que gera receita"
+    },
+    {
+      "pergunta": "O que são juros compostos?",
+      "alternativas": ["Juros sobre o valor inicial", "Juros sobre juros acumulados"],
+      "resposta_correta": "Juros sobre juros acumulados"
+    }
+  ]
+  

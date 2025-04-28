@@ -54,44 +54,43 @@
 
     <!-- Script de validação simples -->
     <script>
-        /**
-         * Função para validar os campos do formulário de cadastro.
-         */
-        function validarFormulario() {
-            // Coleta os valores inseridos pelo usuário
+        async function validarFormulario() {
             const nome = document.getElementById('nome').value;
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             const confirmarSenha = document.getElementById('confirmarSenha').value;
-
-            // Verifica se todos os campos foram preenchidos
+    
             if (!nome || !email || !senha || !confirmarSenha) {
                 alert('⚠️ Preencha todos os campos!');
                 return false;
             }
-
-            // Validação simples do e-mail
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('❌ E-mail inválido! Insira um endereço de e-mail válido.');
-                return false;
-            }
-
-            // Validação da senha: mínimo de 6 caracteres
-            if (senha.length < 6) {
-                alert('🔒 A senha deve ter pelo menos 6 caracteres.');
-                return false;
-            }
-
-            // Verificação se as senhas coincidem
+    
             if (senha !== confirmarSenha) {
                 alert('⚠️ As senhas não coincidem!');
                 return false;
             }
-
-            // Exibe mensagem de sucesso e permite o envio do formulário
-            alert('✅ Conta criada com sucesso!');
-            return true;
+    
+            try {
+                const response = await fetch("http://127.0.0.1:5000/cadastro", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome, email, senha })
+                });
+    
+                const resultado = await response.json();
+    
+                if (resultado.mensagem) {
+                    alert("✅ Conta criada com sucesso!");
+                    window.location.href = "login.html";
+                } else {
+                    alert("❌ " + resultado.erro);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("❌ Erro ao cadastrar. Tente novamente.");
+            }
+    
+            return false;
         }
     </script>
 
