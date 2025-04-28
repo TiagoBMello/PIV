@@ -1,33 +1,58 @@
+# app.py
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from mongo_handler import cadastrar_usuario, autenticar_usuario
 
+# Inicializa o Flask
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Libera o acesso entre front-end e back-end
 
-@app.route("/")
+# -------------------------------
+# Rota padrão para testar a API
+@app.route('/')
 def home():
-    return "<h1>✅ API do LIA está funcionando!</h1>"
+    return '<h1>✅ API do LIA está rodando!</h1>'
 
-@app.route("/cadastro", methods=["POST"])
-def rota_cadastro():
-    dados = request.json
-    nome = dados.get("nome")
-    email = dados.get("email")
-    senha = dados.get("senha")
+# -------------------------------
+# Rota para cadastrar um novo usuário
+@app.route('/cadastrar', methods=['POST'])
+def rota_cadastrar():
+    dados = request.get_json()
+
+    nome = dados.get('nome')
+    email = dados.get('email')
+    senha = dados.get('senha')
+
+    if not nome or not email or not senha:
+        return jsonify({'erro': 'Todos os campos são obrigatórios!'}), 400
 
     resultado = cadastrar_usuario(nome, email, senha)
-    return jsonify(resultado)
 
-@app.route("/login", methods=["POST"])
+    if 'erro' in resultado:
+        return jsonify(resultado), 400
+    return jsonify(resultado), 201
+
+# -------------------------------
+# Rota para autenticar/login do usuário
+@app.route('/login', methods=['POST'])
 def rota_login():
-    dados = request.json
-    email = dados.get("email")
-    senha = dados.get("senha")
+    dados = request.get_json()
 
-    if autenticar_usuario(email, senha):
-        return jsonify({"mensagem": "Login realizado com sucesso!"})
-    return jsonify({"erro": "Credenciais inválidas"}), 401
+    email = dados.get('email')
+    senha = dados.get('senha')
 
+    if not email or not senha:
+        return jsonify({'erro': 'Todos os campos são obrigatórios!'}), 400
+
+    autenticado = autenticar_usuario(email, senha)
+
+    if autenticado:
+        return jsonify({'mensagem': 'Login realizado com sucesso!'}), 200
+    else:
+        return jsonify({'erro': 'Email ou senha incorretos!'}), 401
+
+# -------------------------------
+# Executa o app Flask
 if __name__ == "__main__":
     app.run(debug=True)

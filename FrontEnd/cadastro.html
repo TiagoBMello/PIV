@@ -1,96 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- Definições básicas do documento -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crie sua Conta - LIA</title>
-
-    <!-- Importa o arquivo CSS principal -->
+    <title>Criar Conta - LIA</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <!-- Cabeçalho -->
     <header class="header">
-        <!-- Logo do sistema -->
         <img src="images/lia.png" alt="Logo LIA" class="logo">
-        
-        <!-- Botão para retornar à página inicial -->
         <nav class="nav">
-            <button class="nav-button" style="font-size: 1.5em;" onclick="window.location.href='index.html'">Home</button>
+            <button class="nav-button" onclick="window.location.href='index.html'">🏠 Home</button>
         </nav>
     </header>
 
-    <!-- Área de Cadastro -->
     <main class="main-content">
-        <!-- Título da página -->
-        <h1>🆕 Crie sua Conta no LIA</h1>
+        <h1>🆕 Crie sua Conta</h1>
 
-        <!-- Formulário de cadastro -->
-        <form class="login-form" onsubmit="return validarFormulario()">
-            <!-- Campo para o nome completo -->
-            <input type="text" placeholder="Digite seu nome completo" required class="input-field" id="nome">
-
-            <!-- Campo para o e-mail -->
-            <input type="email" placeholder="Digite seu e-mail" required class="input-field" id="email">
-
-            <!-- Campo para a senha -->
-            <input type="password" placeholder="Digite sua senha" required class="input-field" id="senha">
-
-            <!-- Campo para confirmar a senha -->
-            <input type="password" placeholder="Confirme sua senha" required class="input-field" id="confirmarSenha">
-
-            <!-- Botão para criar a conta -->
-            <button type="submit" class="cta-button" onclick="window.location.href='index.html'">Criar Conta</button>
-
+        <form class="login-form" onsubmit="return validarFormulario(event)">
+            <input type="text" id="nome" placeholder="Digite seu nome completo" required class="input-field">
+            <input type="email" id="email" placeholder="Digite seu e-mail" required class="input-field">
+            <input type="password" id="senha" placeholder="Digite sua senha" required class="input-field">
+            <input type="password" id="confirmarSenha" placeholder="Confirme sua senha" required class="input-field">
+            <button type="submit" class="cta-button">Criar Conta</button>
         </form>
     </main>
 
-    <!-- Rodapé -->
     <footer class="footer">
         <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
     </footer>
 
-    <!-- Script de validação simples -->
     <script>
-        async function validarFormulario() {
+        async function validarFormulario(event) {
+            event.preventDefault();
             const nome = document.getElementById('nome').value;
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             const confirmarSenha = document.getElementById('confirmarSenha').value;
-    
-            if (!nome || !email || !senha || !confirmarSenha) {
-                alert('⚠️ Preencha todos os campos!');
-                return false;
-            }
-    
+
             if (senha !== confirmarSenha) {
                 alert('⚠️ As senhas não coincidem!');
-                return false;
+                return;
             }
-    
+
             try {
-                const response = await fetch("http://127.0.0.1:5000/cadastro", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                const response = await fetch('http://127.0.0.1:5000/cadastrar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nome, email, senha })
                 });
-    
-                const resultado = await response.json();
-    
-                if (resultado.mensagem) {
-                    alert("✅ Conta criada com sucesso!");
-                    window.location.href = "login.html";
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('✅ Conta criada com sucesso!');
+                    window.location.href = 'login.html';
                 } else {
-                    alert("❌ " + resultado.erro);
+                    alert(`❌ ${data.erro}`);
                 }
             } catch (error) {
-                console.error(error);
-                alert("❌ Erro ao cadastrar. Tente novamente.");
+                alert('❌ Erro ao conectar com o servidor.');
             }
-    
-            return false;
         }
     </script>
 

@@ -1,89 +1,69 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- Definindo configurações básicas de codificação e responsividade -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - LIA</title>
-
-    <!-- Importando o arquivo CSS principal -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <!-- Cabeçalho com logo e botão de navegação -->
     <header class="header">
-        <!-- Exibindo a logo -->
         <img src="images/lia.png" alt="Logo LIA" class="logo">
-
-        <!-- Botão para retornar à página inicial -->
         <nav class="nav">
-            <button class="nav-button" style="font-size: 1.5em;" onclick="window.location.href='index.html'">🏠 Home</button>
+            <button class="nav-button" onclick="window.location.href='index.html'">🏠 Home</button>
         </nav>
     </header>
 
-    <!-- Área de Login -->
     <main class="main-content">
-        <!-- Título principal -->
-        <h1>🔐 Entrar no LIA</h1>
+        <h1>🔐 Faça Login</h1>
 
-        <!-- Formulário de login -->
-        <form class="login-form" onsubmit="return validarLogin()">
-            <!-- Campo para o e-mail -->
-            <input type="email" id="email" placeholder="📧 Digite seu e-mail" required class="input-field">
-
-            <!-- Campo para a senha -->
-            <input type="password" id="senha" placeholder="🔑 Digite sua senha" required class="input-field">
-
-            <!-- Botão para acessar -->
-            <button type="submit" class="cta-button">🚀 Entrar</button>
+        <form class="login-form" onsubmit="return validarLogin(event)">
+            <input type="email" id="email" placeholder="Digite seu e-mail" required class="input-field">
+            <input type="password" id="senha" placeholder="Digite sua senha" required class="input-field">
+            <button type="submit" class="cta-button">Entrar</button>
         </form>
 
-        <!-- Exibição de mensagens de status -->
         <div id="login-status" class="status-msg"></div>
     </main>
 
-    <!-- Rodapé -->
     <footer class="footer">
         <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
     </footer>
 
-    <!-- Script para validar o login -->
     <script>
-        async function validarLogin() {
+        async function validarLogin(event) {
+            event.preventDefault();
+
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             const statusMsg = document.getElementById('login-status');
-    
+
             try {
-                const response = await fetch("http://127.0.0.1:5000/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                const response = await fetch('http://127.0.0.1:5000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, senha })
                 });
-    
-                const resultado = await response.json();
-    
+
+                const data = await response.json();
+
                 if (response.ok) {
-                    statusMsg.textContent = "✅ Login bem-sucedido! Redirecionando...";
-                    statusMsg.style.color = "green";
+                    statusMsg.textContent = '✅ Login realizado com sucesso!';
+                    statusMsg.style.color = 'green';
                     setTimeout(() => {
-                        window.location.href = "dashboard.html";
+                        window.location.href = 'dashboard.html';
                     }, 1000);
                 } else {
-                    statusMsg.textContent = "❌ " + resultado.erro;
-                    statusMsg.style.color = "red";
+                    statusMsg.textContent = `❌ ${data.erro}`;
+                    statusMsg.style.color = 'red';
                 }
             } catch (error) {
-                console.error(error);
-                statusMsg.textContent = "❌ Erro ao tentar fazer login.";
-                statusMsg.style.color = "red";
+                statusMsg.textContent = '❌ Erro ao conectar com o servidor.';
+                statusMsg.style.color = 'red';
             }
-    
-            return false;
         }
     </script>
-    
 
 </body>
 </html>

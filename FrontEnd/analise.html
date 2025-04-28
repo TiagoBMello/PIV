@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIA - Análise Financeira</title>
+    <title>Análise e Predição - LIA</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -13,77 +13,48 @@
     <header class="header">
         <img src="images/lia.png" alt="Logo LIA" class="logo">
         <nav class="nav">
-            <button class="nav-button" onclick="window.location.href='dashboard.html'">Voltar ao Dashboard</button>
+            <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
         </nav>
     </header>
 
-    <!-- Conteúdo principal -->
+    <!-- Conteúdo Principal -->
     <main class="main-content">
-        <h1>📊 Análise Financeira</h1>
-        <p>Acompanhe sua evolução financeira ao longo do tempo.</p>
+        <h1>📊 Análise e Predição Financeira</h1>
+        <p>Visualize o crescimento futuro das suas finanças.</p>
 
-        <!-- Seção de Gráficos -->
-        <section class="analysis-section">
-            <h2>💹 Desempenho Mensal</h2>
+        <section class="finance-section analysis-section">
+            <h2>🔍 Simulador de Predição</h2>
             <div class="analysis-charts">
-                <canvas id="graficoDesempenho" class="analysis-chart"></canvas>
-            </div>
-        </section>
-
-        <section class="analysis-section">
-            <h2>📈 Comparativo de Investimentos</h2>
-            <div class="analysis-charts">
-                <canvas id="graficoInvestimentos" class="analysis-chart"></canvas>
+                <canvas id="predicaoChart" class="analysis-chart"></canvas>
             </div>
         </section>
     </main>
 
-    <!-- Botão flutuante para falar com a IA -->
-    <button class="floating-button" onclick="window.location.href='chat.html'">💬 Fale com o LIA</button>
-
-    <!-- Rodapé -->
     <footer class="footer">
         <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
     </footer>
 
-    <!-- Scripts para gerar os gráficos -->
+    <!-- Script para o gráfico (ainda básico) -->
     <script>
-        const ctx1 = document.getElementById('graficoDesempenho').getContext('2d');
-        new Chart(ctx1, {
+        const ctx = document.getElementById('predicaoChart').getContext('2d');
+
+        new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6'],
                 datasets: [{
-                    label: 'Saldo Mensal (R$)',
-                    data: [500, 800, 650, 900, 700, 950],
-                    borderColor: '#007bff',
-                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                    label: 'Projeção de Saldo (R$)',
+                    data: [1000, 1200, 1500, 1800, 2100, 2500],
+                    borderColor: '#006400',
+                    backgroundColor: 'rgba(0, 100, 0, 0.2)',
+                    fill: true,
                     tension: 0.3
                 }]
             },
             options: {
                 responsive: true,
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
-            }
-        });
-
-        const ctx2 = document.getElementById('graficoInvestimentos').getContext('2d');
-        new Chart(ctx2, {
-            type: 'bar',
-            data: {
-                labels: ['Tesouro Direto', 'Ações', 'Criptoativos', 'Fundos'],
-                datasets: [{
-                    label: 'Valor Investido (R$)',
-                    data: [1200, 900, 400, 600],
-                    backgroundColor: ['#28a745', '#ffc107', '#17a2b8', '#6f42c1']
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
+                scales: {
+                    y: { beginAtZero: true }
                 }
             }
         });

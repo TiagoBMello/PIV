@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- Definições básicas de codificação e responsividade -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIA - Painel Principal</title>
-
-    <!-- Importa o arquivo CSS para o estilo da página -->
+    <title>Painel LIA - Seu Futuro Financeiro</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -14,63 +11,45 @@
     <!-- Cabeçalho -->
     <header class="header">
         <img src="images/lia.png" alt="Logo LIA" class="logo">
-        
         <nav class="nav">
-            <button class="nav-button" onclick="window.location.href='analise.html'">📊 Análise</button>
-            <button class="nav-button" onclick="window.location.href='index.html'">Sair</button>
+            <button class="nav-button" onclick="window.location.href='login.html'">🚪 Sair</button>
         </nav>
     </header>
-    <!-- Área principal -->
+
+    <!-- Conteúdo principal -->
     <main class="main-content">
-        <!-- Título principal -->
-        <h1>🏦 Bem-vindo de volta ao LIA!</h1>
+        <h1>📈 Painel LIA - Seu Futuro Financeiro</h1>
         <p>Sua jornada financeira começa aqui. Explore as opções abaixo:</p>
 
-        <!-- Seções principais - cartões de funcionalidades -->
-        <div class="dashboard-sections">
-
-            <!-- Educação Financeira -->
-            <div class="section-card" onclick="window.location.href='educacao_financeira.html'">
-                <div class="emoji">🧠</div>
-                <h3>Educação Financeira</h3>
-                <p>Aprenda conceitos essenciais e faça quizzes interativos.</p>
-            </div>
-
-            <!-- Investimentos -->
-            <div class="section-card" onclick="window.location.href='investimentos.html'">
-                <div class="emoji">📈</div>
-                <h3>Investimentos</h3>
-                <p>Descubra novas oportunidades e acompanhe seus investimentos.</p>
-            </div>
-
-            <!-- Planejamento Financeiro -->
+        <section class="dashboard-sections">
             <div class="section-card" onclick="window.location.href='planejamento.html'">
+                <div class="emoji">📈</div>
+                <h3>Planejamento<br>Financeiro</h3>
+                <p>Defina metas e preveja seu saldo futuro.</p>
+            </div>
+
+            <div class="section-card" onclick="window.location.href='investimentos.html'">
+                <div class="emoji">💸</div>
+                <h3>Dicas de<br>Investimentos</h3>
+                <p>Descubra sugestões personalizadas para investir melhor.</p>
+            </div>
+
+            <div class="section-card" onclick="window.location.href='analise.html'">
                 <div class="emoji">📊</div>
-                <h3>Planejamento Financeiro</h3>
-                <p>Defina metas, crie orçamentos e planeje seu futuro financeiro.</p>
+                <h3>Análise e<br>Predição</h3>
+                <p>Visualize o crescimento financeiro futuro em gráficos.</p>
             </div>
 
-            <!-- Notícias Financeiras -->
-            <div class="section-card" onclick="window.location.href='noticias.html'">
-                <div class="emoji">📰</div>
-                <h3>Notícias Financeiras</h3>
-                <p>Mantenha-se atualizado com as principais notícias do mercado.</p>
-            </div>
-
-            <!-- Sobre o LIA -->
             <div class="section-card" onclick="window.location.href='sobre.html'">
                 <div class="emoji">ℹ️</div>
                 <h3>Sobre o LIA</h3>
-                <p>Entenda o propósito, funcionamento e objetivos do assistente.</p>
+                <p>Conheça o projeto e os objetivos da nossa IA financeira.</p>
             </div>
-
-        </div>
+        </section>
     </main>
+    <!-- Botão para conversar com a LIA -->
+<button class="floating-button" onclick="window.location.href='chat.html'">💬 Converse com a LIA</button>
 
-    <!-- Botão flutuante para interação rápida com o LIA -->
-    <button class="floating-button" onclick="window.location.href='chat.html'">💬 Fale com o LIA</button>
-
-    <!-- Rodapé -->
     <footer class="footer">
         <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
     </footer>

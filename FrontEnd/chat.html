@@ -1,86 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- Definições básicas do documento -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIA - Chat</title>
-
-    <!-- Importa o arquivo CSS para o estilo da página -->
+    <title>Chat com a LIA</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
     <!-- Cabeçalho -->
     <header class="header">
-        <!-- Logo do sistema -->
         <img src="images/lia.png" alt="Logo LIA" class="logo">
-        
-        <!-- Navegação com botão para voltar ao dashboard -->
         <nav class="nav">
-            <button class="nav-button" onclick="window.location.href='dashboard.html'">Voltar ao Dashboard</button>
+            <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Voltar ao Dashboard</button>
         </nav>
     </header>
 
-    <!-- Área principal do chat -->
+    <!-- Conteúdo principal -->
     <main class="main-content">
-        <!-- Título da página -->
-        <h1>💬 Converse com o LIA</h1>
+        <h1>💬 Converse com a LIA</h1>
+        <p>Em breve você poderá conversar diretamente com a LIA para receber orientações financeiras personalizadas!</p>
 
-        <!-- Caixa de exibição das mensagens -->
-        <div id="chat-box" class="chat-box"></div>
-
-        <!-- Campo de entrada para mensagens -->
-        <input type="text" id="user-input" class="input-field" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter'){enviarMensagem()}">
-
-        <!-- Botão para enviar a mensagem -->
-        <button class="cta-button" onclick="enviarMensagem()">Enviar</button>
+        <div class="chat-placeholder">
+            <img src="images/chat_placeholder.png" alt="Chat em construção" class="placeholder-img">
+            <p style="margin-top: 20px; font-size: 1.2em;">🚀 Estamos preparando uma experiência incrível para você!</p>
+        </div>
     </main>
 
     <!-- Rodapé -->
     <footer class="footer">
         <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
     </footer>
-
-    <!-- Script do Chat -->
-    <script>
-        /**
-         * Função para enviar uma mensagem e simular a resposta da IA.
-         */
-        function enviarMensagem() {
-            const input = document.getElementById('user-input');
-            const chatBox = document.getElementById('chat-box');
-            const userMessage = input.value.trim();
-
-            // Validação para evitar mensagens vazias
-            if (userMessage === '') {
-                alert('⚠️ Por favor, digite uma mensagem antes de enviar.');
-                return;
-            }
-
-            // Adiciona a mensagem do usuário no chat
-            chatBox.innerHTML += `<div class="chat-message user"><strong>Você:</strong> ${userMessage}</div>`;
-
-            // Simulação de resposta da IA (pode ser integrada posteriormente com um backend real)
-            const respostas = [
-                "Estou aprendendo a responder suas perguntas! 😊",
-                "Que interessante! Pode me contar mais?",
-                "IA é incrível, não acha? O que você gostaria de aprender hoje?",
-                "Posso te ajudar a entender melhor sobre investimentos!",
-                "Vamos falar sobre educação financeira? Pergunte o que quiser!"
-            ];
-
-            // Escolhe uma resposta aleatória para simular interatividade
-            const respostaAleatoria = respostas[Math.floor(Math.random() * respostas.length)];
-            setTimeout(() => {
-                chatBox.innerHTML += `<div class="chat-message lia"><strong>LIA:</strong> ${respostaAleatoria}</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 1000); // Atraso de 1 segundo para parecer mais natural
-
-            // Limpa o campo de entrada após o envio
-            input.value = '';
-        }
-    </script>
 
 </body>
 </html>
