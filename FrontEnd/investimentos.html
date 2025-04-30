@@ -6,6 +6,19 @@
     <title>LIA - Investimentos</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+       .investment-details {
+    background-color: #ffffff;
+    color: #333;
+    font-size: 0.9em;
+    margin-top: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+    </style>
 </head>
 <body>
 
@@ -25,21 +38,49 @@
         <section class="finance-section">
             <h2>📂 Tipos de Investimentos</h2>
             <div class="investment-cards">
-                <div class="investment-card">
+                <div class="investment-card" onclick="toggleInfo('info-renda-fixa')">
                     <h3>🏦 Renda Fixa</h3>
                     <p>Investimentos seguros com retorno previsível.</p>
+                    <div id="info-renda-fixa" class="investment-info">
+                        <ul>
+                            <li>✔️ Exemplos: Tesouro Selic, CDBs, LCIs</li>
+                            <li>✔️ Ideal para perfis conservadores</li>
+                            <li>📈 Rendimento previsível, baixo risco</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="investment-card">
+                <div class="investment-card" onclick="toggleInfo('info-renda-variavel')">
                     <h3>📈 Renda Variável</h3>
                     <p>Ações, fundos e ativos de maior rentabilidade.</p>
+                    <div id="info-renda-variavel" class="investment-info">
+                        <ul>
+                            <li>✔️ Exemplos: Ações, FIIs, ETFs</li>
+                            <li>⚠️ Alta volatilidade e potencial de retorno</li>
+                            <li>🧠 Requer acompanhamento e análise</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="investment-card">
+                <div class="investment-card" onclick="toggleInfo('info-fundos')">
                     <h3>🤝 Fundos de Investimento</h3>
                     <p>Aplicações coletivas com gestão profissional.</p>
+                    <div id="info-fundos" class="investment-info">
+                        <ul>
+                            <li>✔️ Exemplos: Fundos multimercado, renda fixa, cambial</li>
+                            <li>📊 Diversificação com praticidade</li>
+                            <li>💼 Geridos por especialistas</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="investment-card">
+                <div class="investment-card" onclick="toggleInfo('info-cripto')">
                     <h3>🪙 Criptoativos</h3>
                     <p>Ativos digitais como Bitcoin e Ethereum.</p>
+                    <div id="info-cripto" class="investment-info">
+                        <ul>
+                            <li>✔️ Altíssimo potencial de valorização</li>
+                            <li>⚠️ Alta volatilidade e risco elevado</li>
+                            <li>🧠 Exige conhecimento e estratégia</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
@@ -49,6 +90,20 @@
     <footer class="footer">
         <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
     </footer>
+
+    <!-- Script para expandir conteúdo -->
+    <script>
+        function toggleInfo(id) {
+            const element = document.getElementById(id);
+            const isVisible = element.style.display === 'block';
+
+            // Oculta todos os outros
+            document.querySelectorAll('.investment-info').forEach(info => info.style.display = 'none');
+
+            // Alterna o atual
+            element.style.display = isVisible ? 'none' : 'block';
+        }
+    </script>
 
 </body>
 </html>
