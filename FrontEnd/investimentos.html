@@ -7,17 +7,26 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-       .investment-details {
-    background-color: #ffffff;
-    color: #333;
-    font-size: 0.9em;
-    margin-top: 10px;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    text-align: left;
-}
+        .investment-details {
+            background-color: #ffffff;
+            color: #333;
+            font-size: 0.9em;
+            margin-top: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            text-align: left;
+        }
 
+        .investment-info {
+            display: none;
+            text-align: left;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -35,6 +44,7 @@
         <h1>💸 Dicas de Investimentos</h1>
         <p>Descubra sugestões personalizadas para investir melhor.</p>
 
+        <!-- Sessão 1: Tipos de Investimentos -->
         <section class="finance-section">
             <h2>📂 Tipos de Investimentos</h2>
             <div class="investment-cards">
@@ -81,6 +91,56 @@
                             <li>🧠 Exige conhecimento e estratégia</li>
                         </ul>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sessão 2: Perfil do Investidor -->
+        <section class="finance-section">
+            <h2>🧠 Conheça seu Perfil de Investidor</h2>
+            <div class="investment-cards">
+                <div class="investment-card">
+                    <h3>🔰 Conservador</h3>
+                    <p>Prefere segurança e estabilidade. Prioriza baixa volatilidade.</p>
+                </div>
+                <div class="investment-card">
+                    <h3>⚖️ Moderado</h3>
+                    <p>Busca equilíbrio entre risco e retorno. Tolera algumas oscilações.</p>
+                </div>
+                <div class="investment-card">
+                    <h3>🚀 Agressivo</h3>
+                    <p>Foca em alta rentabilidade, mesmo com maiores riscos envolvidos.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sessão 3: Dicas baseadas no perfil -->
+        <section class="finance-section">
+            <h2>🎯 Dicas Baseadas no Perfil</h2>
+            <div class="investment-cards">
+                <div class="investment-card">
+                    <h3>🔰 Conservador</h3>
+                    <ul class="investment-details">
+                        <li>• Prefira Tesouro Selic e CDBs de grandes bancos</li>
+                        <li>• Priorize liquidez e segurança</li>
+                        <li>• Invista em curto/médio prazo</li>
+                    </ul>
+                </div>
+                <div class="investment-card">
+                    <h3>⚖️ Moderado</h3>
+                    <ul class="investment-details">
+                        <li>• Combine renda fixa com FIIs ou fundos multimercado</li>
+                        <li>• Diversifique entre setores e ativos</li>
+                        <li>• Avalie objetivos de médio e longo prazo</li>
+                    </ul>
+                </div>
+                <div class="investment-card">
+                    <h3>🚀 Agressivo</h3>
+                    <ul class="investment-details">
+                        <li>• Explore ações, criptomoedas e ETFs internacionais</li>
+                        <li>• Faça rebalanceamentos frequentes</li>
+                        <li>• Tenha visão de longo prazo</li>
+                    </ul>
                 </div>
             </div>
         </section>

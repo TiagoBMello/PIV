@@ -1,64 +1,122 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análise e Predição - LIA</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LIA - Análise e Predição</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <!-- Cabeçalho -->
-    <header class="header">
-        <img src="images/lia.png" alt="Logo LIA" class="logo">
-        <nav class="nav">
-            <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
-        </nav>
-    </header>
+  <!-- Cabeçalho -->
+  <header class="header">
+    <img src="images/lia.png" alt="Logo LIA" class="logo" />
+    <nav class="nav">
+      <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
+    </nav>
+  </header>
 
-    <!-- Conteúdo Principal -->
-    <main class="main-content">
-        <h1>📊 Análise e Predição Financeira</h1>
-        <p>Visualize o crescimento futuro das suas finanças.</p>
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+    <h1>📊 Análise e Predição</h1>
+    <p>Simule seu saldo futuro com ajuda da inteligência artificial.</p>
 
-        <section class="finance-section analysis-section">
-            <h2>🔍 Simulador de Predição</h2>
-            <div class="analysis-charts">
-                <canvas id="predicaoChart" class="analysis-chart"></canvas>
-            </div>
-        </section>
-    </main>
+    <section class="finance-section">
+      <h2>📥 Preencha os dados abaixo</h2>
+      <div class="goal-inputs">
+        <input type="number" id="valorInicial" class="input-field" placeholder="💰 Valor Inicial (R$)" />
+        <input type="number" id="aporteMensal" class="input-field" placeholder="📆 Aporte Mensal (R$)" />
+        <input type="number" id="taxaJuros" class="input-field" placeholder="📈 Taxa de Juros (% ao mês)" />
+        <input type="number" id="duracao" class="input-field" placeholder="📅 Duração (meses)" />
+        <button class="cta-button" onclick="prever()">🔍 Analisar</button>
+      </div>
+    </section>
 
-    <footer class="footer">
-        <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
-    </footer>
+    <section class="analysis-section" style="display:none;" id="resultado-section">
+      <h2>📉 Resultado da Predição</h2>
+      <p id="resultado-texto"></p>
+      <canvas id="graficoPredicao" class="analysis-chart"></canvas>
+    </section>
+  </main>
 
-    <!-- Script para o gráfico (ainda básico) -->
-    <script>
-        const ctx = document.getElementById('predicaoChart').getContext('2d');
+  <!-- Rodapé -->
+  <footer class="footer">
+    <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+  </footer>
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6'],
-                datasets: [{
-                    label: 'Projeção de Saldo (R$)',
-                    data: [1000, 1200, 1500, 1800, 2100, 2500],
-                    borderColor: '#006400',
-                    backgroundColor: 'rgba(0, 100, 0, 0.2)',
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
+  <!-- Script para consumir a API -->
+  <script>
+    async function prever() {
+      const valorInicial = document.getElementById('valorInicial').value;
+      const aporteMensal = document.getElementById('aporteMensal').value;
+      const taxaJuros = document.getElementById('taxaJuros').value;
+      const duracao = document.getElementById('duracao').value;
+
+      if (!valorInicial || !aporteMensal || !taxaJuros || !duracao) {
+        alert('⚠️ Preencha todos os campos!');
+        return;
+      }
+
+      try {
+        const res = await fetch('http://127.0.0.1:5000/prever', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            valorInicial,
+            aporteMensal,
+            taxaJuros,
+            duracao
+          })
         });
-    </script>
 
+        const dados = await res.json();
+
+        if (res.ok) {
+          exibirResultado(dados.valores, dados.previsaoFinal);
+        } else {
+          alert(`❌ Erro: ${dados.erro}`);
+        }
+
+      } catch (err) {
+        alert('❌ Erro de conexão com a API.');
+      }
+    }
+
+    let chartInstance = null;
+
+    function exibirResultado(valores, previsaoFinal) {
+      document.getElementById('resultado-section').style.display = 'block';
+      document.getElementById('resultado-texto').innerText = `💡 Seu saldo final estimado será de R$ ${previsaoFinal.toFixed(2).replace('.', ',')}`;
+
+      const ctx = document.getElementById('graficoPredicao').getContext('2d');
+      const labels = valores.map((_, i) => `${i + 1} mês`);
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Saldo projetado (R$)',
+            data: valores,
+            borderColor: '#006400',
+            backgroundColor: 'rgba(0, 100, 0, 0.2)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  </script>
 </body>
 </html>
