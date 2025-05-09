@@ -1,73 +1,103 @@
+from flask import Flask, request, jsonify
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from pymongo import MongoClient
-from flask import Flask, request, jsonif
 import numpy as np
+from flask_cors import CORS
 
+app = Flask(__name__)
+CORS(app)  # ← importante para permitir chamadas do navegador
+
+
+# Inicializa Flask
+app = Flask(__name__)
 
 # Conectar ao MongoDB
 client = MongoClient("mongodb://localhost:27017/")
 db = client.lia_db
 colecao_quiz = db.quiz_respostas
-app = Flask(__name__)
 
+# Rota para calcular o perfil
 @app.route('/perfil', methods=['POST'])
 def calcular_perfil():
-    dados = request.get_json()
-    respostas = dados.get('respostas')  # Lista de 6 respostas do quiz
-    user_id = dados.get('user_id')
+    try:
+        dados = request.get_json(force=True)
+        print("🔍 Dados recebidos:", dados)
 
-    if not respostas or len(respostas) != 6:
-        return jsonify({'erro': 'Respostas inválidas.'}), 400
+        respostas = dados.get('respostas')
+        user_id = dados.get('user_id')
 
-    # Salvar no MongoDB
-    colecao_quiz.insert_one({
-        "user_id": user_id,
-        "respostas": respostas
-    })
+        if not respostas or len(respostas) != 6:
+            print("❌ Respostas inválidas:", respostas)
+            return jsonify({'erro': 'Respostas inválidas.'}), 400
 
-    # Coletar todas as respostas para treinar o modelo
+        # resto do código continua normalmente...
+
+        # (retorno final do perfil fica depois)
+    
+    except Exception as e:
+        print("❗ Erro interno na rota /perfil:", str(e))
+        return jsonify({'erro': 'Erro interno no servidor.'}), 500
+
+
+    # Coletar todas as respostas
     todas_respostas = [doc["respostas"] for doc in colecao_quiz.find({}, {"_id": 0, "respostas": 1})]
     X = np.array(todas_respostas)
 
-    # Reduz dimensionalidade se necessário
+    # Aplicar PCA se necessário
     if len(X) > 10:
         X = PCA(n_components=2).fit_transform(X)
 
-    # Clusterização com KMeans (3 perfis)
+    # Clusterização
     kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
     kmeans.fit(X)
     cluster = int(kmeans.predict([X[-1]])[0])
 
-    # Mapear cluster para perfil
+    # Perfis
     perfis = {
         0: {
             "perfil": "Conservador",
-            "descricao": "Foque em segurança: Tesouro Selic, CDBs grandes bancos.",
+            "descricao": "Você valoriza segurança, previsibilidade e liquidez nos seus investimentos.",
             "detalhes": [
-                "Monte uma reserva de emergência (6 meses de despesas).",
-                "Evite ativos voláteis como ações ou criptos.",
-                "Reavalie sua carteira a cada 6 meses."
+                "Monte uma reserva de emergência com 6 meses de despesas em Tesouro Selic.",
+                "Invista em CDBs de bancos grandes com liquidez diária.",
+                "Considere LCIs e LCAs para isenção de IR em renda fixa.",
+                "Evite ativos voláteis como ações ou criptomoedas.",
+                "Use corretoras seguras como NuInvest ou Itaú para acompanhar seus rendimentos.",
+                "Avalie sua carteira a cada 6 ou 12 meses com foco em estabilidade.",
+                "Evite produtos com taxa de administração acima de 1% ao ano."
             ]
         },
         1: {
             "perfil": "Moderado",
-            "descricao": "Equilibre FIIs, fundos multimercado e renda fixa.",
+            "descricao": "Você busca equilíbrio entre risco e retorno, aceitando pequenas oscilações.",
             "detalhes": [
-                "Diversifique entre setores e prazos.",
-                "Busque ativos que ofereçam rendimento mensal.",
-                "Evite concentração em poucos ativos."
+                "Combine Tesouro IPCA e Fundos Multimercado com Fundos Imobiliários (FIIs).",
+                "Invista parte em ações blue chips como PETR4, ITUB4.",
+                "Diversifique entre setores (financeiro, energia, consumo).",
+                "Use aportes mensais e rebalanceie a carteira semestralmente.",
+                "Explore ETFs como BOVA11 e IVVB11.",
+                "Utilize simuladores como Kinvo ou Grana Capital para visualizar metas.",
+                "Mantenha disciplina e não reaja emocionalmente a quedas pequenas."
             ]
         },
         2: {
             "perfil": "Agressivo",
-            "descricao": "Busque rentabilidade: ETFs, ações e criptos.",
+            "descricao": "Você está disposto a correr riscos para buscar maior rentabilidade.",
             "detalhes": [
-                "Invista com visão de longo prazo.",
-                "Estude volatilidade e rebalanceamento.",
-                "Alocar parte em mercados internacionais pode ajudar."
+                "Invista em ações de crescimento, small caps e startups via Seedrs.",
+                "Explore criptomoedas como Bitcoin e Ethereum com até 10% da carteira.",
+                "Utilize ferramentas como TradingView para análise técnica.",
+                "Avalie aportes em ETFs internacionais (QQQ, ARKK).",
+                "Estude estratégias como Buy and Hold e Value Investing.",
+                "Acompanhe relatórios de casas de análise (Ex: Suno, Empiricus).",
+                "Esteja preparado para fortes oscilações e mantenha foco no longo prazo."
             ]
         }
     }
 
     return jsonify(perfis[cluster])
+
+# Iniciar servidor
+if __name__ == "__main__":
+    app.run(debug=True)

@@ -158,12 +158,44 @@
     </form>
   </section>
 
-  <!-- Sessão 3: Dica personalizada -->
+  <!-- Sessão 3: Dicas fixas baseadas no perfil -->
+  <div id="bloco-dicas-fixas">
+    <section class="finance-section">
+      <h2>🎯 Dicas Baseadas no Perfil</h2>
+      <div class="investment-cards">
+        <div class="investment-card">
+          <h3>🔰 Conservador</h3>
+          <ul class="investment-details">
+            <li>Prefira Tesouro Selic e CDBs de grandes bancos</li>
+            <li>Priorize liquidez e segurança</li>
+            <li>Invista em curto/médio prazo</li>
+          </ul>
+        </div>
+        <div class="investment-card">
+          <h3>⚖️ Moderado</h3>
+          <ul class="investment-details">
+            <li>Combine renda fixa com FIIs ou fundos multimercado</li>
+            <li>Diversifique entre setores e ativos</li>
+            <li>Avalie objetivos de médio e longo prazo</li>
+          </ul>
+        </div>
+        <div class="investment-card">
+          <h3>🚀 Agressivo</h3>
+          <ul class="investment-details">
+            <li>Explore ações, criptomoedas e ETFs internacionais</li>
+            <li>Faça rebalanceamentos frequentes</li>
+            <li>Tenha visão de longo prazo</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Sessão 4: Dica personalizada -->
   <section id="dicaPersonalizada" class="finance-section" style="display: none;">
     <h2>🎯 Sua Dica de Investimento Personalizada</h2>
     <div id="dicaResultado" class="investment-cards"></div>
   </section>
-
 </main>
 
 <footer class="footer">
@@ -191,7 +223,7 @@
       respostas.push(parseInt(val.value));
     }
 
-    const user_id = "usuario123"; // ← pode trocar isso para pegar de login no futuro
+    const user_id = "usuario123"; // isso deve vir do login depois
 
     try {
       const response = await fetch("http://localhost:5000/perfil", {
@@ -202,23 +234,30 @@
         body: JSON.stringify({ user_id, respostas })
       });
 
-      if (!response.ok) throw new Error("Erro na resposta da API.");
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Erro HTTP: ${response.status} - ${errText}`);
+      }
 
       const data = await response.json();
+      console.log("✅ Resposta da API:", data);
 
-      // Mostrar dica personalizada
+      // Oculta dicas fixas (se existir esse bloco no HTML)
+      const fixas = document.getElementById("bloco-dicas-fixas");
+      if (fixas) fixas.style.display = "none";
+
+      // Mostra dica personalizada
       const dicaSecao = document.getElementById("dicaPersonalizada");
       const dicaResultado = document.getElementById("dicaResultado");
 
       dicaSecao.style.display = "block";
-
       dicaResultado.innerHTML = `
         <div class="investment-card">
           <h3>${data.perfil}</h3>
           <div class="investment-details">
             <p>${data.descricao}</p>
             <ul>
-              ${data.detalhes.map(item => `<li>• ${item}</li>`).join("")}
+              ${data.detalhes.map(item => `<li>📌 ${item}</li>`).join("")}
             </ul>
           </div>
         </div>
@@ -227,8 +266,8 @@
       dicaSecao.scrollIntoView({ behavior: 'smooth' });
 
     } catch (erro) {
-      console.error("Erro ao consultar perfil:", erro);
-      alert("Ocorreu um erro ao calcular seu perfil. Tente novamente.");
+      console.error("❌ Erro ao consultar perfil:", erro);
+      alert("Ocorreu um erro ao calcular seu perfil. Veja o console para mais detalhes.");
     }
   }
 </script>
