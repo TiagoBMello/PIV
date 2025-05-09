@@ -1,94 +1,69 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from mongo_handler import cadastrar_usuario, autenticar_usuario
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from pymongo import MongoClient
 
-# Para predição
-import numpy as np
-from sklearn.linear_model import LinearRegression
+# Conectar ao MongoDB
+client = MongoClient("mongodb://localhost:27017/")
+db = client.lia_db
+colecao_quiz = db.quiz_respostas
 
-# Inicializa o Flask
-app = Flask(__name__)
-CORS(app)  # Libera o acesso entre front-end e back-end
-
-# -------------------------------
-# Rota padrão para testar a API
-@app.route('/')
-def home():
-    return '<h1>✅ API do LIA está rodando!</h1>'
-
-# -------------------------------
-# Rota para cadastrar um novo usuário
-@app.route('/cadastrar', methods=['POST'])
-def rota_cadastrar():
+@app.route('/perfil', methods=['POST'])
+def calcular_perfil():
     dados = request.get_json()
+    respostas = dados.get('respostas')  # Lista de 6 respostas do quiz
+    user_id = dados.get('user_id')
 
-    nome = dados.get('nome')
-    email = dados.get('email')
-    senha = dados.get('senha')
+    if not respostas or len(respostas) != 6:
+        return jsonify({'erro': 'Respostas inválidas.'}), 400
 
-    if not nome or not email or not senha:
-        return jsonify({'erro': 'Todos os campos são obrigatórios!'}), 400
+    # Salvar no MongoDB
+    colecao_quiz.insert_one({
+        "user_id": user_id,
+        "respostas": respostas
+    })
 
-    resultado = cadastrar_usuario(nome, email, senha)
+    # Coletar todas as respostas para treinar o modelo
+    todas_respostas = [doc["respostas"] for doc in colecao_quiz.find({}, {"_id": 0, "respostas": 1})]
+    X = np.array(todas_respostas)
 
-    if 'erro' in resultado:
-        return jsonify(resultado), 400
-    return jsonify(resultado), 201
+    # Reduz dimensionalidade se necessário
+    if len(X) > 10:
+        X = PCA(n_components=2).fit_transform(X)
 
-# -------------------------------
-# Rota para autenticar/login do usuário
-@app.route('/login', methods=['POST'])
-def rota_login():
-    dados = request.get_json()
+    # Clusterização com KMeans (3 perfis)
+    kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+    kmeans.fit(X)
+    cluster = int(kmeans.predict([X[-1]])[0])
 
-    email = dados.get('email')
-    senha = dados.get('senha')
+    # Mapear cluster para perfil
+    perfis = {
+        0: {
+            "perfil": "Conservador",
+            "descricao": "Foque em segurança: Tesouro Selic, CDBs grandes bancos.",
+            "detalhes": [
+                "Monte uma reserva de emergência (6 meses de despesas).",
+                "Evite ativos voláteis como ações ou criptos.",
+                "Reavalie sua carteira a cada 6 meses."
+            ]
+        },
+        1: {
+            "perfil": "Moderado",
+            "descricao": "Equilibre FIIs, fundos multimercado e renda fixa.",
+            "detalhes": [
+                "Diversifique entre setores e prazos.",
+                "Busque ativos que ofereçam rendimento mensal.",
+                "Evite concentração em poucos ativos."
+            ]
+        },
+        2: {
+            "perfil": "Agressivo",
+            "descricao": "Busque rentabilidade: ETFs, ações e criptos.",
+            "detalhes": [
+                "Invista com visão de longo prazo.",
+                "Estude volatilidade e rebalanceamento.",
+                "Alocar parte em mercados internacionais pode ajudar."
+            ]
+        }
+    }
 
-    if not email or not senha:
-        return jsonify({'erro': 'Todos os campos são obrigatórios!'}), 400
-
-    autenticado = autenticar_usuario(email, senha)
-
-    if autenticado:
-        return jsonify({'mensagem': 'Login realizado com sucesso!'}), 200
-    else:
-        return jsonify({'erro': 'Email ou senha incorretos!'}), 401
-
-# -------------------------------
-# Rota para previsão de saldo com regressão linear
-@app.route('/prever', methods=['POST'])
-def prever_saldo():
-    dados = request.get_json()
-
-    try:
-        valor_inicial = float(dados['valorInicial'])
-        aporte_mensal = float(dados['aporteMensal'])
-        taxa_juros = float(dados['taxaJuros']) / 100
-        meses = int(dados['duracao'])
-
-        valores = []
-        saldo = valor_inicial
-
-        for i in range(meses + 1):
-            valores.append(saldo)
-            saldo = (saldo + aporte_mensal) * (1 + taxa_juros)
-
-        X = np.array(range(len(valores))).reshape(-1, 1)
-        y = np.array(valores).reshape(-1, 1)
-
-        modelo = LinearRegression()
-        modelo.fit(X, y)
-
-        previsao_final = modelo.predict([[meses]])[0][0]
-
-        return jsonify({
-            'valores': valores,
-            'previsaoFinal': round(previsao_final, 2)
-        })
-    except Exception as e:
-        return jsonify({'erro': f'Erro na previsão: {str(e)}'}), 500
-
-# -------------------------------
-# Executa o app Flask
-if __name__ == "__main__":
-    app.run(debug=True)
+    return jsonify(perfis[cluster])

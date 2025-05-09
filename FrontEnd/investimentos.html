@@ -1,169 +1,251 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIA - Investimentos</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .investment-details {
-            background-color: #ffffff;
-            color: #333;
-            font-size: 0.9em;
-            margin-top: 10px;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-            text-align: left;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LIA - Investimentos</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .investment-details {
+      background-color: #ffffff;
+      color: #333;
+      font-size: 0.9em;
+      margin-top: 10px;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      text-align: left;
+    }
 
-        .investment-info {
-            display: none;
-            text-align: left;
-            margin-top: 10px;
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-    </style>
+    .investment-info {
+      display: none;
+      text-align: left;
+      margin-top: 10px;
+      background-color: #f9f9f9;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .question {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .question p {
+      font-weight: bold;
+    }
+
+    button {
+      background-color: #006400;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Cabeçalho -->
-    <header class="header">
-        <img src="images/lia.png" alt="Logo LIA" class="logo">
-        <nav class="nav">
-            <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
-        </nav>
-    </header>
+<header class="header">
+  <img src="images/lia.png" alt="Logo LIA" class="logo">
+  <nav class="nav">
+    <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
+  </nav>
+</header>
 
-    <!-- Conteúdo Principal -->
-    <main class="main-content">
-        <h1>💸 Dicas de Investimentos</h1>
-        <p>Descubra sugestões personalizadas para investir melhor.</p>
+<main class="main-content">
+  <h1>💸 Dicas de Investimentos</h1>
+  <p>Descubra sugestões personalizadas para investir melhor.</p>
 
-        <!-- Sessão 1: Tipos de Investimentos -->
-        <section class="finance-section">
-            <h2>📂 Tipos de Investimentos</h2>
-            <div class="investment-cards">
-                <div class="investment-card" onclick="toggleInfo('info-renda-fixa')">
-                    <h3>🏦 Renda Fixa</h3>
-                    <p>Investimentos seguros com retorno previsível.</p>
-                    <div id="info-renda-fixa" class="investment-info">
-                        <ul>
-                            <li>✔️ Exemplos: Tesouro Selic, CDBs, LCIs</li>
-                            <li>✔️ Ideal para perfis conservadores</li>
-                            <li>📈 Rendimento previsível, baixo risco</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="investment-card" onclick="toggleInfo('info-renda-variavel')">
-                    <h3>📈 Renda Variável</h3>
-                    <p>Ações, fundos e ativos de maior rentabilidade.</p>
-                    <div id="info-renda-variavel" class="investment-info">
-                        <ul>
-                            <li>✔️ Exemplos: Ações, FIIs, ETFs</li>
-                            <li>⚠️ Alta volatilidade e potencial de retorno</li>
-                            <li>🧠 Requer acompanhamento e análise</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="investment-card" onclick="toggleInfo('info-fundos')">
-                    <h3>🤝 Fundos de Investimento</h3>
-                    <p>Aplicações coletivas com gestão profissional.</p>
-                    <div id="info-fundos" class="investment-info">
-                        <ul>
-                            <li>✔️ Exemplos: Fundos multimercado, renda fixa, cambial</li>
-                            <li>📊 Diversificação com praticidade</li>
-                            <li>💼 Geridos por especialistas</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="investment-card" onclick="toggleInfo('info-cripto')">
-                    <h3>🪙 Criptoativos</h3>
-                    <p>Ativos digitais como Bitcoin e Ethereum.</p>
-                    <div id="info-cripto" class="investment-info">
-                        <ul>
-                            <li>✔️ Altíssimo potencial de valorização</li>
-                            <li>⚠️ Alta volatilidade e risco elevado</li>
-                            <li>🧠 Exige conhecimento e estratégia</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
+  <!-- Sessão 1: Tipos de Investimentos -->
+  <section class="finance-section">
+    <h2>📂 Tipos de Investimentos</h2>
+    <div class="investment-cards">
+      <div class="investment-card" onclick="toggleInfo('info-renda-fixa')">
+        <h3>🏦 Renda Fixa</h3>
+        <p>Investimentos seguros com retorno previsível.</p>
+        <div id="info-renda-fixa" class="investment-info">
+          <ul>
+            <li>✔️ Exemplos: Tesouro Selic, CDBs, LCIs</li>
+            <li>✔️ Ideal para perfis conservadores</li>
+            <li>📈 Rendimento previsível, baixo risco</li>
+          </ul>
+        </div>
+      </div>
+      <div class="investment-card" onclick="toggleInfo('info-renda-variavel')">
+        <h3>📈 Renda Variável</h3>
+        <p>Ações, fundos e ativos de maior rentabilidade.</p>
+        <div id="info-renda-variavel" class="investment-info">
+          <ul>
+            <li>✔️ Exemplos: Ações, FIIs, ETFs</li>
+            <li>⚠️ Alta volatilidade e potencial de retorno</li>
+            <li>🧠 Requer acompanhamento e análise</li>
+          </ul>
+        </div>
+      </div>
+      <div class="investment-card" onclick="toggleInfo('info-fundos')">
+        <h3>🤝 Fundos de Investimento</h3>
+        <p>Aplicações coletivas com gestão profissional.</p>
+        <div id="info-fundos" class="investment-info">
+          <ul>
+            <li>✔️ Exemplos: Fundos multimercado, renda fixa, cambial</li>
+            <li>📊 Diversificação com praticidade</li>
+            <li>💼 Geridos por especialistas</li>
+          </ul>
+        </div>
+      </div>
+      <div class="investment-card" onclick="toggleInfo('info-cripto')">
+        <h3>🪙 Criptoativos</h3>
+        <p>Ativos digitais como Bitcoin e Ethereum.</p>
+        <div id="info-cripto" class="investment-info">
+          <ul>
+            <li>✔️ Altíssimo potencial de valorização</li>
+            <li>⚠️ Alta volatilidade e risco elevado</li>
+            <li>🧠 Exige conhecimento e estratégia</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <!-- Sessão 2: Perfil do Investidor -->
-        <section class="finance-section">
-            <h2>🧠 Conheça seu Perfil de Investidor</h2>
-            <div class="investment-cards">
-                <div class="investment-card">
-                    <h3>🔰 Conservador</h3>
-                    <p>Prefere segurança e estabilidade. Prioriza baixa volatilidade.</p>
-                </div>
-                <div class="investment-card">
-                    <h3>⚖️ Moderado</h3>
-                    <p>Busca equilíbrio entre risco e retorno. Tolera algumas oscilações.</p>
-                </div>
-                <div class="investment-card">
-                    <h3>🚀 Agressivo</h3>
-                    <p>Foca em alta rentabilidade, mesmo com maiores riscos envolvidos.</p>
-                </div>
-            </div>
-        </section>
+  <!-- Sessão 2: Quiz -->
+  <section class="finance-section">
+    <h2>🧠 Descubra seu Perfil de Investidor</h2>
+    <form id="quizForm">
+      <div class="question">
+        <p>1. Como você reage à queda de valor de um investimento?</p>
+        <label><input type="radio" name="q1" value="1"> Vendo tudo imediatamente</label><br>
+        <label><input type="radio" name="q1" value="2"> Espero um pouco e avalio</label><br>
+        <label><input type="radio" name="q1" value="3"> Aproveito para comprar mais</label>
+      </div>
+      <div class="question">
+        <p>2. Qual seu principal objetivo ao investir?</p>
+        <label><input type="radio" name="q2" value="1"> Proteger meu dinheiro</label><br>
+        <label><input type="radio" name="q2" value="2"> Crescer de forma equilibrada</label><br>
+        <label><input type="radio" name="q2" value="3"> Multiplicar, mesmo com riscos</label>
+      </div>
+      <div class="question">
+        <p>3. Qual o seu nível de conhecimento sobre investimentos?</p>
+        <label><input type="radio" name="q3" value="1"> Iniciante</label><br>
+        <label><input type="radio" name="q3" value="2"> Intermediário</label><br>
+        <label><input type="radio" name="q3" value="3"> Avançado</label>
+      </div>
+      <div class="question">
+        <p>4. Qual é o seu horizonte de investimento?</p>
+        <label><input type="radio" name="q4" value="1"> Menos de 1 ano</label><br>
+        <label><input type="radio" name="q4" value="2"> 1 a 3 anos</label><br>
+        <label><input type="radio" name="q4" value="3"> Mais de 3 anos</label>
+      </div>
+      <div class="question">
+        <p>5. Como está sua situação financeira atual?</p>
+        <label><input type="radio" name="q5" value="1"> Preciso de liquidez</label><br>
+        <label><input type="radio" name="q5" value="2"> Estável, mas com reservas</label><br>
+        <label><input type="radio" name="q5" value="3"> Posso manter investimentos por anos</label>
+      </div>
+      <div class="question">
+        <p>6. Se você ganhasse R$10.000 hoje, o que faria?</p>
+        <label><input type="radio" name="q6" value="1"> Guardaria tudo no banco</label><br>
+        <label><input type="radio" name="q6" value="2"> Investiria uma parte e guardaria o resto</label><br>
+        <label><input type="radio" name="q6" value="3"> Investiria tudo para tentar ganhar mais</label>
+      </div>
+      <button type="button" onclick="calcularPerfil()">Ver meu perfil</button>
+    </form>
+  </section>
 
-        <!-- Sessão 3: Dicas baseadas no perfil -->
-        <section class="finance-section">
-            <h2>🎯 Dicas Baseadas no Perfil</h2>
-            <div class="investment-cards">
-                <div class="investment-card">
-                    <h3>🔰 Conservador</h3>
-                    <ul class="investment-details">
-                        <li>• Prefira Tesouro Selic e CDBs de grandes bancos</li>
-                        <li>• Priorize liquidez e segurança</li>
-                        <li>• Invista em curto/médio prazo</li>
-                    </ul>
-                </div>
-                <div class="investment-card">
-                    <h3>⚖️ Moderado</h3>
-                    <ul class="investment-details">
-                        <li>• Combine renda fixa com FIIs ou fundos multimercado</li>
-                        <li>• Diversifique entre setores e ativos</li>
-                        <li>• Avalie objetivos de médio e longo prazo</li>
-                    </ul>
-                </div>
-                <div class="investment-card">
-                    <h3>🚀 Agressivo</h3>
-                    <ul class="investment-details">
-                        <li>• Explore ações, criptomoedas e ETFs internacionais</li>
-                        <li>• Faça rebalanceamentos frequentes</li>
-                        <li>• Tenha visão de longo prazo</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-    </main>
+  <!-- Sessão 3: Dica personalizada -->
+  <section id="dicaPersonalizada" class="finance-section" style="display: none;">
+    <h2>🎯 Sua Dica de Investimento Personalizada</h2>
+    <div id="dicaResultado" class="investment-cards"></div>
+  </section>
 
-    <!-- Rodapé -->
-    <footer class="footer">
-        <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
-    </footer>
+</main>
 
-    <!-- Script para expandir conteúdo -->
-    <script>
-        function toggleInfo(id) {
-            const element = document.getElementById(id);
-            const isVisible = element.style.display === 'block';
+<footer class="footer">
+  <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+</footer>
 
-            // Oculta todos os outros
-            document.querySelectorAll('.investment-info').forEach(info => info.style.display = 'none');
+<script>
+  function toggleInfo(id) {
+    const element = document.getElementById(id);
+    const isVisible = element.style.display === 'block';
+    document.querySelectorAll('.investment-info').forEach(info => info.style.display = 'none');
+    element.style.display = isVisible ? 'none' : 'block';
+  }
 
-            // Alterna o atual
-            element.style.display = isVisible ? 'none' : 'block';
-        }
-    </script>
+  function calcularPerfil() {
+    const perguntas = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'];
+    let total = 0;
+
+    for (let i = 0; i < perguntas.length; i++) {
+      const val = document.querySelector(`input[name="${perguntas[i]}"]:checked`);
+      if (!val) {
+        alert("Responda todas as perguntas.");
+        return;
+      }
+      total += parseInt(val.value);
+    }
+
+    const dicaSecao = document.getElementById("dicaPersonalizada");
+    const dicaResultado = document.getElementById("dicaResultado");
+
+    dicaSecao.style.display = "block";
+
+    let dicaHTML = "";
+
+    if (total <= 9) {
+      dicaHTML = `
+        <div class="investment-card">
+          <h3>🔰 Perfil Conservador</h3>
+          <div class="investment-details">
+            <p>Você preza por segurança e estabilidade financeira.</p>
+            <ul>
+              <li>✅ Invista no <strong>Tesouro Selic</strong> — seguro e com liquidez diária</li>
+              <li>💡 Use CDBs de grandes bancos com vencimentos curtos</li>
+              <li>📌 Monte uma reserva de emergência (6 meses de gastos)</li>
+              <li>📚 Recomendação: leia sobre “Renda Fixa para Iniciantes”</li>
+            </ul>
+          </div>
+        </div>`;
+    } else if (total <= 13) {
+      dicaHTML = `
+        <div class="investment-card">
+          <h3>⚖️ Perfil Moderado</h3>
+          <div class="investment-details">
+            <p>Você busca equilíbrio entre rentabilidade e risco.</p>
+            <ul>
+              <li>✅ Diversifique com <strong>Fundos Imobiliários (FIIs)</strong></li>
+              <li>📊 Mantenha parte em CDBs e Fundos Multimercado</li>
+              <li>📈 Reavalie sua carteira a cada 6 meses</li>
+              <li>📚 Recomendação: “Como escolher bons FIIs”</li>
+            </ul>
+          </div>
+        </div>`;
+    } else {
+      dicaHTML = `
+        <div class="investment-card">
+          <h3>🚀 Perfil Agressivo</h3>
+          <div class="investment-details">
+            <p>Você tem apetite para retornos maiores e riscos elevados.</p>
+            <ul>
+              <li>🌍 Invista em <strong>ETFs internacionais</strong> como IVVB11</li>
+              <li>🪙 Alocar até 10% da carteira em Criptoativos como BTC/ETH</li>
+              <li>📅 Mantenha-se investido por mais de 5 anos</li>
+              <li>📚 Recomendação: “Ações Globais e Alocação Inteligente”</li>
+            </ul>
+          </div>
+        </div>`;
+    }
+
+    dicaResultado.innerHTML = dicaHTML;
+    dicaSecao.scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
 
 </body>
 </html>
