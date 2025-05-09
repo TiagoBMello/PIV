@@ -178,9 +178,9 @@
     element.style.display = isVisible ? 'none' : 'block';
   }
 
-  function calcularPerfil() {
+  async function calcularPerfil() {
     const perguntas = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'];
-    let total = 0;
+    let respostas = [];
 
     for (let i = 0; i < perguntas.length; i++) {
       const val = document.querySelector(`input[name="${perguntas[i]}"]:checked`);
@@ -188,64 +188,51 @@
         alert("Responda todas as perguntas.");
         return;
       }
-      total += parseInt(val.value);
+      respostas.push(parseInt(val.value));
     }
 
-    const dicaSecao = document.getElementById("dicaPersonalizada");
-    const dicaResultado = document.getElementById("dicaResultado");
+    const user_id = "usuario123"; // ← pode trocar isso para pegar de login no futuro
 
-    dicaSecao.style.display = "block";
+    try {
+      const response = await fetch("http://localhost:5000/perfil", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ user_id, respostas })
+      });
 
-    let dicaHTML = "";
+      if (!response.ok) throw new Error("Erro na resposta da API.");
 
-    if (total <= 9) {
-      dicaHTML = `
+      const data = await response.json();
+
+      // Mostrar dica personalizada
+      const dicaSecao = document.getElementById("dicaPersonalizada");
+      const dicaResultado = document.getElementById("dicaResultado");
+
+      dicaSecao.style.display = "block";
+
+      dicaResultado.innerHTML = `
         <div class="investment-card">
-          <h3>🔰 Perfil Conservador</h3>
+          <h3>${data.perfil}</h3>
           <div class="investment-details">
-            <p>Você preza por segurança e estabilidade financeira.</p>
+            <p>${data.descricao}</p>
             <ul>
-              <li>✅ Invista no <strong>Tesouro Selic</strong> — seguro e com liquidez diária</li>
-              <li>💡 Use CDBs de grandes bancos com vencimentos curtos</li>
-              <li>📌 Monte uma reserva de emergência (6 meses de gastos)</li>
-              <li>📚 Recomendação: leia sobre “Renda Fixa para Iniciantes”</li>
+              ${data.detalhes.map(item => `<li>• ${item}</li>`).join("")}
             </ul>
           </div>
-        </div>`;
-    } else if (total <= 13) {
-      dicaHTML = `
-        <div class="investment-card">
-          <h3>⚖️ Perfil Moderado</h3>
-          <div class="investment-details">
-            <p>Você busca equilíbrio entre rentabilidade e risco.</p>
-            <ul>
-              <li>✅ Diversifique com <strong>Fundos Imobiliários (FIIs)</strong></li>
-              <li>📊 Mantenha parte em CDBs e Fundos Multimercado</li>
-              <li>📈 Reavalie sua carteira a cada 6 meses</li>
-              <li>📚 Recomendação: “Como escolher bons FIIs”</li>
-            </ul>
-          </div>
-        </div>`;
-    } else {
-      dicaHTML = `
-        <div class="investment-card">
-          <h3>🚀 Perfil Agressivo</h3>
-          <div class="investment-details">
-            <p>Você tem apetite para retornos maiores e riscos elevados.</p>
-            <ul>
-              <li>🌍 Invista em <strong>ETFs internacionais</strong> como IVVB11</li>
-              <li>🪙 Alocar até 10% da carteira em Criptoativos como BTC/ETH</li>
-              <li>📅 Mantenha-se investido por mais de 5 anos</li>
-              <li>📚 Recomendação: “Ações Globais e Alocação Inteligente”</li>
-            </ul>
-          </div>
-        </div>`;
+        </div>
+      `;
+
+      dicaSecao.scrollIntoView({ behavior: 'smooth' });
+
+    } catch (erro) {
+      console.error("Erro ao consultar perfil:", erro);
+      alert("Ocorreu um erro ao calcular seu perfil. Tente novamente.");
     }
-
-    dicaResultado.innerHTML = dicaHTML;
-    dicaSecao.scrollIntoView({ behavior: 'smooth' });
   }
 </script>
+
 
 </body>
 </html>

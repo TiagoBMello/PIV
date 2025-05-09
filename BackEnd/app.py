@@ -1,11 +1,15 @@
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from pymongo import MongoClient
+from flask import Flask, request, jsonif
+import numpy as np
+
 
 # Conectar ao MongoDB
 client = MongoClient("mongodb://localhost:27017/")
 db = client.lia_db
 colecao_quiz = db.quiz_respostas
+app = Flask(__name__)
 
 @app.route('/perfil', methods=['POST'])
 def calcular_perfil():
