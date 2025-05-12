@@ -223,7 +223,7 @@
       respostas.push(parseInt(val.value));
     }
 
-    const user_id = "usuario123"; // isso deve vir do login depois
+    const user_id = "usuario123"; // ← substitua pelo ID real no futuro
 
     try {
       const response = await fetch("http://localhost:5000/perfil", {
@@ -240,17 +240,17 @@
       }
 
       const data = await response.json();
-      console.log("✅ Resposta da API:", data);
 
-      // Oculta dicas fixas (se existir esse bloco no HTML)
-      const fixas = document.getElementById("bloco-dicas-fixas");
-      if (fixas) fixas.style.display = "none";
+      // Oculta bloco fixo, se existir
+      const fixo = document.getElementById("bloco-dicas-fixas");
+      if (fixo) fixo.style.display = "none";
 
-      // Mostra dica personalizada
+      // Mostra resultado dinâmico
       const dicaSecao = document.getElementById("dicaPersonalizada");
       const dicaResultado = document.getElementById("dicaResultado");
-
       dicaSecao.style.display = "block";
+
+      // Gera HTML dinâmico
       dicaResultado.innerHTML = `
         <div class="investment-card">
           <h3>${data.perfil}</h3>
@@ -259,6 +259,14 @@
             <ul>
               ${data.detalhes.map(item => `<li>📌 ${item}</li>`).join("")}
             </ul>
+            ${data.extra ? `<p><strong>Dica extra:</strong> ${data.extra}</p>` : ""}
+            ${data.links && data.links.length > 0 ? `
+              <div style="margin-top: 10px;">
+                <p><strong>📚 Estude mais:</strong></p>
+                <ul>
+                  ${data.links.map(link => `<li><a href="${link.url}" target="_blank">${link.titulo}</a></li>`).join("")}
+                </ul>
+              </div>` : ""}
           </div>
         </div>
       `;
@@ -267,7 +275,7 @@
 
     } catch (erro) {
       console.error("❌ Erro ao consultar perfil:", erro);
-      alert("Ocorreu um erro ao calcular seu perfil. Veja o console para mais detalhes.");
+      alert("Erro ao calcular seu perfil. Tente novamente.");
     }
   }
 </script>
