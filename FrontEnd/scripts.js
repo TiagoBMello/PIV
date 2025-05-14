@@ -1,8 +1,10 @@
-console.log("LIA - Assistente Financeiro inicializado!");
+// scripts.js (etapa final do Planejamento)
 
-const user_id = "usuario123"; // Substituir pelo ID real futuramente
+console.log("LIA - Planejamento IA finalizado!");
 
-// 📌 Adiciona nova meta ao backend
+const user_id = "usuario123"; // virá do login futuramente
+
+// 📌 Adiciona nova meta
 async function adicionarMeta() {
   const nome = document.getElementById('nome-meta').value;
   const valor = parseFloat(document.getElementById('valor-meta').value);
@@ -28,45 +30,36 @@ async function adicionarMeta() {
   }
 }
 
-// 📋 Lista metas e mostra feedback visual
+// 📋 Lista metas e exibe progresso, atraso e botões
 async function listarMetas() {
   try {
     const resposta = await fetch(`http://localhost:5000/metas/${user_id}`);
-    const dados = await resposta.json();
-
+    const metas = await resposta.json();
     const lista = document.getElementById('lista-metas');
     lista.innerHTML = '';
 
-    dados.forEach(meta => {
-      const progresso = (meta.acumulado / meta.valor) * 100;
-      const idealPorMes = meta.valor / meta.prazo;
-
-      const mesesDesdeCriacao = Math.max(1, Math.ceil((new Date() - new Date(meta.criada_em)) / (1000 * 60 * 60 * 24 * 30)));
-      const esperado = idealPorMes * mesesDesdeCriacao;
-
-      let statusMsg = '';
-      if (meta.acumulado >= meta.valor) {
-        statusMsg = "🎉 Meta alcançada!";
-      } else if (meta.acumulado >= esperado) {
-        statusMsg = "✅ No caminho certo!";
-      } else {
-        const faltando = (esperado - meta.acumulado).toFixed(2);
-        statusMsg = `⚠️ Atrasado: precisa de R$${faltando} a mais.`;
-      }
+    metas.forEach(meta => {
+      const acumulado = meta.acumulado || 0;
+      const restante = meta.valor - acumulado;
+      const progresso = Math.min(100, (acumulado / meta.valor) * 100).toFixed(0);
+      const mesesRestantes = meta.prazo;
+      const necessarioPorMes = (meta.valor / meta.prazo).toFixed(2);
+      const ritmoAtual = (acumulado / meta.prazo).toFixed(2);
+      const previsaoConclusao = ritmoAtual > 0 ? Math.ceil((meta.valor - acumulado) / ritmoAtual) : '∞';
+      const atrasado = acumulado < (meta.valor / meta.prazo) * (meta.prazo - mesesRestantes + 1);
 
       const div = document.createElement('div');
       div.className = 'meta-card';
       div.innerHTML = `
         <p><strong>${meta.nome}</strong></p>
-        <p>Valor total: R$${meta.valor.toFixed(2)}</p>
-        <p>Acumulado: R$${(meta.acumulado || 0).toFixed(2)}</p>
-        <p>Prazo: ${meta.prazo} meses</p>
-        <p>Prioridade: <span class="prioridade-${meta.prioridade}">${meta.prioridade.toUpperCase()}</span></p>
-        <div class="progress-bar-container">
-          <div class="progress-bar" style="width: ${Math.min(100, progresso)}%"></div>
-        </div>
-        <p class="status-feedback">${statusMsg}</p>
+        <p>Valor total: R$${meta.valor.toFixed(2)} | Acumulado: R$${acumulado.toFixed(2)}</p>
+        <p>Prazo: ${meta.prazo} meses | Prioridade: <span class="prioridade-${meta.prioridade}">${meta.prioridade.toUpperCase()}</span></p>
+        <p>🎯 Progresso: ${progresso}%</p>
+        ${atrasado ? `<p style="color: red">⚠️ Atrasado - Se continuar nesse ritmo, você atingirá em ${previsaoConclusao} meses.</p>
+        <p>💡 Recomendo guardar R$${necessarioPorMes} por mês para alcançar no prazo.</p>` : ''}
+        ${progresso >= 100 ? `<button onclick="retirarFundos('${meta.nome}')">💸 Retirar Fundos</button>` : ''}
       `;
+
       lista.appendChild(div);
     });
   } catch (erro) {
@@ -74,7 +67,7 @@ async function listarMetas() {
   }
 }
 
-// 🤖 Distribuição automática baseada em IA
+// 🤖 Distribuição com IA
 async function calcularDistribuicao() {
   const valor_mensal = parseFloat(document.getElementById('valor-mensal').value);
   if (isNaN(valor_mensal) || valor_mensal <= 0) {
@@ -97,5 +90,56 @@ async function calcularDistribuicao() {
   }
 }
 
-// Chama a listagem ao carregar a página
+// 🧹 Remove meta quando concluída
+async function retirarFundos(nomeMeta) {
+  const confirmacao = confirm(`Tem certeza que deseja retirar fundos da meta "${nomeMeta}"? Ela será encerrada.`);
+  if (!confirmacao) return;
+
+  try {
+    await fetch(`http://localhost:5000/metas/deletar/${user_id}/${encodeURIComponent(nomeMeta)}`, {
+      method: "DELETE"
+    });
+    listarMetas();
+  } catch (erro) {
+    alert("❌ Erro ao excluir meta concluída.");
+  }
+}
+
+// Atualiza aporte e analisa previsão para cada meta
+
+async function analisarMeta(nome) {
+  const user_id = "usuario123";
+
+  // Registrar um novo aporte (exemplo automático de R$ 100)
+  const valor = 100; // Aqui no futuro você pode pedir pro usuário definir
+  await fetch("http://localhost:5000/historico", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id, nome, valor })
+  });
+
+  // Consultar análise preditiva
+  const resposta = await fetch("http://localhost:5000/projecao", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id, nome })
+  });
+
+  const dados = await resposta.json();
+
+  if (!resposta.ok) {
+    alert(`❌ Erro: ${dados.erro}`);
+    return;
+  }
+
+  let mensagem = `📈 Acumulado: R$ ${dados.acumulado}\n` +
+                 `🎯 Valor restante: R$ ${dados.restante}\n` +
+                 `📊 Média mensal: R$ ${dados.media_mensal.toFixed(2)}\n` +
+                 `⏳ Estimativa de conclusão: ${dados.meses_estimados} meses\n` +
+                 `💡 Sugestão de aporte ideal: R$ ${dados.recomendado_mensal.toFixed(2)}`;
+
+  alert(mensagem);
+}
+
+// Carrega metas ao abrir a página
 window.onload = listarMetas;

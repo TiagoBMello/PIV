@@ -215,6 +215,104 @@ def contribuir_para_metas():
         return jsonify({"mensagem": "Contribuição mensal aplicada com sucesso."})
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
+    
+@app.route('/metas/analise/<user_id>', methods=['GET'])
+def analisar_progresso(user_id):
+    try:
+        hoje = datetime.utcnow()
+        metas = list(colecao_metas.find({"user_id": user_id}, {"_id": 0}))
+        analise = []
+
+        for meta in metas:
+            valor_total = meta["valor"]
+            acumulado = meta.get("acumulado", 0)
+            prazo = meta["prazo"]
+            criada_em = meta["criada_em"]
+            meses_passados = max(1, (hoje.year - criada_em.year) * 12 + hoje.month - criada_em.month)
+            media_necessaria = valor_total / prazo
+            media_atual = acumulado / meses_passados
+
+            progresso = round((acumulado / valor_total) * 100, 2)
+            status = "Em dia" if media_atual >= media_necessaria else "Atrasado"
+
+            if status == "Atrasado":
+                meses_estimados = int((valor_total - acumulado) / media_atual) if media_atual > 0 else "-"
+                recomendacao = round((valor_total - acumulado) / (prazo - meses_passados), 2) if prazo > meses_passados else valor_total - acumulado
+            else:
+                meses_estimados = "-"
+                recomendacao = media_necessaria
+
+            analise.append({
+                "nome": meta["nome"],
+                "progresso": progresso,
+                "status": status,
+                "prazo": prazo,
+                "estimativa_conclusao": meses_estimados,
+                "guardar_recomendado": round(recomendacao, 2)
+            })
+
+        return jsonify(analise)
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+    
+    # Cole esse bloco ANTES do "if __name__ == '__main__':"
+
+from sklearn.linear_model import LinearRegression
+
+@app.route('/historico', methods=['POST'])
+def registrar_historico():
+    try:
+        dados = request.get_json()
+        user_id = dados.get("user_id")
+        nome_meta = dados.get("nome")
+        valor = float(dados.get("valor"))
+
+        colecao_metas.update_one(
+            {"user_id": user_id, "nome": nome_meta},
+            {"$push": {"historico_aportes": {"valor": valor, "data": datetime.utcnow()}}}
+        )
+        return jsonify({"mensagem": "Histórico registrado."})
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+@app.route('/projecao', methods=['POST'])
+def analisar_meta():
+    try:
+        dados = request.get_json()
+        user_id = dados.get("user_id")
+        nome_meta = dados.get("nome")
+
+        meta = colecao_metas.find_one({"user_id": user_id, "nome": nome_meta})
+        historico = meta.get("historico_aportes", [])
+
+        if len(historico) < 2:
+            return jsonify({"erro": "Pouco histórico para projeção."}), 400
+
+        valores = [h["valor"] for h in historico]
+        acumulado = sum(valores)
+        restante = meta["valor"] - acumulado
+
+        X = np.array(range(1, len(valores)+1)).reshape(-1, 1)
+        y = np.array(valores).reshape(-1, 1)
+
+        modelo = LinearRegression().fit(X, y)
+        media = modelo.coef_[0][0]
+
+        meses_estimados = int(np.ceil(restante / media)) if media > 0 else -1
+        recomendado = round(meta["valor"] / meta["prazo"], 2)
+
+        return jsonify({
+            "acumulado": round(acumulado, 2),
+            "restante": round(restante, 2),
+            "media_mensal": round(media, 2),
+            "meses_estimados": meses_estimados,
+            "recomendado_mensal": recomendado
+        })
+
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+
 
 # Inicia o servidor
 if __name__ == '__main__':

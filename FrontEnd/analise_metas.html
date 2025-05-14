@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análise das Metas - LIA</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .meta-card {
+      background-color: #fff;
+      border-left: 5px solid #006400;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+    .meta-card p {
+      margin: 6px 0;
+    }
+    .atrasado {
+      color: red;
+      font-weight: bold;
+    }
+    .emdia {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <img src="images/lia.png" alt="Logo LIA" class="logo">
+    <nav class="nav">
+      <button class="nav-button" onclick="window.location.href='planejamento.html'">⬅️ Voltar ao Planejamento</button>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <h1>📊 Análise das Metas</h1>
+    <p>LIA analisou seu progresso e tem recomendações para você:</p>
+
+    <div id="analise-metas"></div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+  </footer>
+
+  <script>
+    const user_id = "usuario123"; // depois virá do login
+
+    async function carregarAnalise() {
+      try {
+        const res = await fetch(`http://localhost:5000/metas/analise/${user_id}`);
+        const dados = await res.json();
+        const container = document.getElementById('analise-metas');
+
+        if (!Array.isArray(dados)) {
+          container.innerHTML = `<p style="color:red">Erro: ${dados.erro}</p>`;
+          return;
+        }
+
+        container.innerHTML = '';
+        dados.forEach(meta => {
+          const div = document.createElement('div');
+          div.className = 'meta-card';
+          div.innerHTML = `
+            <p><strong>${meta.nome}</strong></p>
+            <p>Progresso: ${meta.progresso}%</p>
+            <p>Status: <span class="${meta.status === 'Atrasado' ? 'atrasado' : 'emdia'}">${meta.status}</span></p>
+            <p>Estimativa de Conclusão: ${meta.estimativa_conclusao === '-' ? 'Indefinida' : meta.estimativa_conclusao + ' meses'}</p>
+            <p>Recomendação: Guarde R$${meta.guardar_recomendado.toFixed(2)} por mês para atingir a meta no prazo.</p>
+          `;
+          container.appendChild(div);
+        });
+      } catch (erro) {
+        console.error("Erro ao carregar análise:", erro);
+      }
+    }
+
+    window.onload = carregarAnalise;
+  </script>
+</body>
+</html>
