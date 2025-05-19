@@ -2,284 +2,115 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LIA - Investimentos</title>
-  <link rel="stylesheet" href="css/styles.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIA - Dicas Personalizadas</title>
+  <link rel="stylesheet" href="css/styles.css">
   <style>
-    .investment-details {
+    .investment-card {
       background-color: #ffffff;
-      color: #333;
-      font-size: 0.9em;
-      margin-top: 10px;
+      border-left: 5px solid #006400;
       padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-      text-align: left;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
     }
-
-    .investment-info {
-      display: none;
-      text-align: left;
+    .investment-card h3 {
+      margin-top: 0;
+    }
+    .investment-details ul {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    .extra-info {
       margin-top: 10px;
-      background-color: #f9f9f9;
       padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background-color: #f0f8ff;
+      border-left: 4px solid #007acc;
+      border-radius: 6px;
+      font-style: italic;
     }
-
-    .question {
-      margin-bottom: 20px;
-      padding: 10px;
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    .useful-links a {
+      display: block;
+      margin-top: 5px;
+      color: #006400;
+      text-decoration: none;
     }
-
-    .question p {
-      font-weight: bold;
+    .useful-links a:hover {
+      text-decoration: underline;
     }
-
-    button {
+    .cta-button {
+      margin-top: 20px;
+      padding: 10px 20px;
       background-color: #006400;
       color: white;
-      padding: 10px 20px;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
-      margin-top: 10px;
+    }
+    .cta-button:hover {
+      background-color: #004d00;
     }
   </style>
 </head>
 <body>
+  <header class="header">
+    <img src="images/lia.png" alt="Logo LIA" class="logo">
+    <nav class="nav">
+      <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
+    </nav>
+  </header>
 
-<header class="header">
-  <img src="images/lia.png" alt="Logo LIA" class="logo">
-  <nav class="nav">
-    <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
-  </nav>
-</header>
+  <main class="main-content">
+    <h1>📈 Dicas Personalizadas com IA</h1>
+    <p>Baseado em seu perfil de investidor, veja recomendações e conteúdos relevantes.</p>
 
-<main class="main-content">
-  <h1>💸 Dicas de Investimentos</h1>
-  <p>Descubra sugestões personalizadas para investir melhor.</p>
-
-  <!-- Sessão 1: Tipos de Investimentos -->
-  <section class="finance-section">
-    <h2>📂 Tipos de Investimentos</h2>
-    <div class="investment-cards">
-      <div class="investment-card" onclick="toggleInfo('info-renda-fixa')">
-        <h3>🏦 Renda Fixa</h3>
-        <p>Investimentos seguros com retorno previsível.</p>
-        <div id="info-renda-fixa" class="investment-info">
-          <ul>
-            <li>✔️ Exemplos: Tesouro Selic, CDBs, LCIs</li>
-            <li>✔️ Ideal para perfis conservadores</li>
-            <li>📈 Rendimento previsível, baixo risco</li>
-          </ul>
-        </div>
-      </div>
-      <div class="investment-card" onclick="toggleInfo('info-renda-variavel')">
-        <h3>📈 Renda Variável</h3>
-        <p>Ações, fundos e ativos de maior rentabilidade.</p>
-        <div id="info-renda-variavel" class="investment-info">
-          <ul>
-            <li>✔️ Exemplos: Ações, FIIs, ETFs</li>
-            <li>⚠️ Alta volatilidade e potencial de retorno</li>
-            <li>🧠 Requer acompanhamento e análise</li>
-          </ul>
-        </div>
-      </div>
-      <div class="investment-card" onclick="toggleInfo('info-fundos')">
-        <h3>🤝 Fundos de Investimento</h3>
-        <p>Aplicações coletivas com gestão profissional.</p>
-        <div id="info-fundos" class="investment-info">
-          <ul>
-            <li>✔️ Exemplos: Fundos multimercado, renda fixa, cambial</li>
-            <li>📊 Diversificação com praticidade</li>
-            <li>💼 Geridos por especialistas</li>
-          </ul>
-        </div>
-      </div>
-      <div class="investment-card" onclick="toggleInfo('info-cripto')">
-        <h3>🪙 Criptoativos</h3>
-        <p>Ativos digitais como Bitcoin e Ethereum.</p>
-        <div id="info-cripto" class="investment-info">
-          <ul>
-            <li>✔️ Altíssimo potencial de valorização</li>
-            <li>⚠️ Alta volatilidade e risco elevado</li>
-            <li>🧠 Exige conhecimento e estratégia</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sessão 2: Quiz -->
-  <section class="finance-section">
-    <h2>🧠 Descubra seu Perfil de Investidor</h2>
-    <form id="quizForm">
-      <div class="question">
-        <p>1. Como você reage à queda de valor de um investimento?</p>
-        <label><input type="radio" name="q1" value="1"> Vendo tudo imediatamente</label><br>
-        <label><input type="radio" name="q1" value="2"> Espero um pouco e avalio</label><br>
-        <label><input type="radio" name="q1" value="3"> Aproveito para comprar mais</label>
-      </div>
-      <div class="question">
-        <p>2. Qual seu principal objetivo ao investir?</p>
-        <label><input type="radio" name="q2" value="1"> Proteger meu dinheiro</label><br>
-        <label><input type="radio" name="q2" value="2"> Crescer de forma equilibrada</label><br>
-        <label><input type="radio" name="q2" value="3"> Multiplicar, mesmo com riscos</label>
-      </div>
-      <div class="question">
-        <p>3. Qual o seu nível de conhecimento sobre investimentos?</p>
-        <label><input type="radio" name="q3" value="1"> Iniciante</label><br>
-        <label><input type="radio" name="q3" value="2"> Intermediário</label><br>
-        <label><input type="radio" name="q3" value="3"> Avançado</label>
-      </div>
-      <div class="question">
-        <p>4. Qual é o seu horizonte de investimento?</p>
-        <label><input type="radio" name="q4" value="1"> Menos de 1 ano</label><br>
-        <label><input type="radio" name="q4" value="2"> 1 a 3 anos</label><br>
-        <label><input type="radio" name="q4" value="3"> Mais de 3 anos</label>
-      </div>
-      <div class="question">
-        <p>5. Como está sua situação financeira atual?</p>
-        <label><input type="radio" name="q5" value="1"> Preciso de liquidez</label><br>
-        <label><input type="radio" name="q5" value="2"> Estável, mas com reservas</label><br>
-        <label><input type="radio" name="q5" value="3"> Posso manter investimentos por anos</label>
-      </div>
-      <div class="question">
-        <p>6. Se você ganhasse R$10.000 hoje, o que faria?</p>
-        <label><input type="radio" name="q6" value="1"> Guardaria tudo no banco</label><br>
-        <label><input type="radio" name="q6" value="2"> Investiria uma parte e guardaria o resto</label><br>
-        <label><input type="radio" name="q6" value="3"> Investiria tudo para tentar ganhar mais</label>
-      </div>
-      <button type="button" onclick="calcularPerfil()">Ver meu perfil</button>
-    </form>
-  </section>
-
-  <!-- Sessão 3: Dicas fixas baseadas no perfil -->
-  <div id="bloco-dicas-fixas">
-    <section class="finance-section">
-      <h2>🎯 Dicas Baseadas no Perfil</h2>
-      <div class="investment-cards">
-        <div class="investment-card">
-          <h3>🔰 Conservador</h3>
-          <ul class="investment-details">
-            <li>Prefira Tesouro Selic e CDBs de grandes bancos</li>
-            <li>Priorize liquidez e segurança</li>
-            <li>Invista em curto/médio prazo</li>
-          </ul>
-        </div>
-        <div class="investment-card">
-          <h3>⚖️ Moderado</h3>
-          <ul class="investment-details">
-            <li>Combine renda fixa com FIIs ou fundos multimercado</li>
-            <li>Diversifique entre setores e ativos</li>
-            <li>Avalie objetivos de médio e longo prazo</li>
-          </ul>
-        </div>
-        <div class="investment-card">
-          <h3>🚀 Agressivo</h3>
-          <ul class="investment-details">
-            <li>Explore ações, criptomoedas e ETFs internacionais</li>
-            <li>Faça rebalanceamentos frequentes</li>
-            <li>Tenha visão de longo prazo</li>
-          </ul>
-        </div>
-      </div>
+    <section id="dicaPersonalizada" class="finance-section" style="display: none;">
+      <div id="dicaResultado" class="investment-card"></div>
+      <button class="cta-button" onclick="window.location.href='grafico_ia.html'">🧠 Visualizar IA (PCA + KMeans)</button>
     </section>
-  </div>
+  </main>
 
-  <!-- Sessão 4: Dica personalizada -->
-  <section id="dicaPersonalizada" class="finance-section" style="display: none;">
-    <h2>🎯 Sua Dica de Investimento Personalizada</h2>
-    <div id="dicaResultado" class="investment-cards"></div>
-  </section>
-</main>
+  <footer class="footer">
+    <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+  </footer>
 
-<footer class="footer">
-  <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
-</footer>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const respostasSalvas = localStorage.getItem('respostasQuiz');
+      if (!respostasSalvas) return;
 
-<script>
-  function toggleInfo(id) {
-    const element = document.getElementById(id);
-    const isVisible = element.style.display === 'block';
-    document.querySelectorAll('.investment-info').forEach(info => info.style.display = 'none');
-    element.style.display = isVisible ? 'none' : 'block';
-  }
+      fetch('http://localhost:5000/perfil', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: 'usuario123',
+          respostas: JSON.parse(respostasSalvas)
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.erro) return;
 
-  async function calcularPerfil() {
-    const perguntas = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'];
-    let respostas = [];
+        const dicaSecao = document.getElementById("dicaPersonalizada");
+        const dicaResultado = document.getElementById("dicaResultado");
 
-    for (let i = 0; i < perguntas.length; i++) {
-      const val = document.querySelector(`input[name="${perguntas[i]}"]:checked`);
-      if (!val) {
-        alert("Responda todas as perguntas.");
-        return;
-      }
-      respostas.push(parseInt(val.value));
-    }
-
-    const user_id = "usuario123"; // ← substitua pelo ID real no futuro
-
-    try {
-      const response = await fetch("http://localhost:5000/perfil", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user_id, respostas })
-      });
-
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Erro HTTP: ${response.status} - ${errText}`);
-      }
-
-      const data = await response.json();
-
-      // Oculta bloco fixo, se existir
-      const fixo = document.getElementById("bloco-dicas-fixas");
-      if (fixo) fixo.style.display = "none";
-
-      // Mostra resultado dinâmico
-      const dicaSecao = document.getElementById("dicaPersonalizada");
-      const dicaResultado = document.getElementById("dicaResultado");
-      dicaSecao.style.display = "block";
-
-      // Gera HTML dinâmico
-      dicaResultado.innerHTML = `
-        <div class="investment-card">
-          <h3>${data.perfil}</h3>
+        dicaSecao.style.display = "block";
+        dicaResultado.innerHTML = `
+          <h3>🎯 Perfil: ${data.perfil}</h3>
+          <p>${data.descricao}</p>
           <div class="investment-details">
-            <p>${data.descricao}</p>
             <ul>
-              ${data.detalhes.map(item => `<li>📌 ${item}</li>`).join("")}
+              ${data.detalhes.map(item => `<li>📌 ${item}</li>`).join('')}
             </ul>
-            ${data.extra ? `<p><strong>Dica extra:</strong> ${data.extra}</p>` : ""}
-            ${data.links && data.links.length > 0 ? `
-              <div style="margin-top: 10px;">
-                <p><strong>📚 Estude mais:</strong></p>
-                <ul>
-                  ${data.links.map(link => `<li><a href="${link.url}" target="_blank">${link.titulo}</a></li>`).join("")}
-                </ul>
-              </div>` : ""}
           </div>
-        </div>
-      `;
-
-      dicaSecao.scrollIntoView({ behavior: 'smooth' });
-
-    } catch (erro) {
-      console.error("❌ Erro ao consultar perfil:", erro);
-      alert("Erro ao calcular seu perfil. Tente novamente.");
-    }
-  }
-</script>
-
-
+          ${data.extra ? `<div class="extra-info">🔎 ${data.extra}</div>` : ''}
+          ${data.links?.length ? `<div class="useful-links">
+            <h4>📚 Conteúdos úteis:</h4>
+            ${data.links.map(link => `<a href="${link.url}" target="_blank">🔗 ${link.titulo}</a>`).join('')}
+          </div>` : ''}
+        `;
+      });
+    });
+  </script>
 </body>
 </html>

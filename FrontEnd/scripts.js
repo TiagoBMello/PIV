@@ -141,5 +141,71 @@ async function analisarMeta(nome) {
   alert(mensagem);
 }
 
+async function calcularPerfil() {
+  const perguntas = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'];
+  let respostas = [];
+
+  for (let i = 0; i < perguntas.length; i++) {
+    const val = document.querySelector(`input[name="${perguntas[i]}"]:checked`);
+    if (!val) {
+      alert("⚠️ Responda todas as perguntas.");
+      return;
+    }
+    respostas.push(parseInt(val.value));
+  }
+
+  const user_id = "usuario123"; // ← depois será dinâmico
+
+  try {
+    const response = await fetch("http://localhost:5000/perfil", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id, respostas })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(`❌ Erro: ${data.erro}`);
+      return;
+    }
+
+    const dicaSecao = document.getElementById("dicaPersonalizada");
+    const dicaResultado = document.getElementById("dicaResultado");
+    dicaSecao.style.display = "block";
+
+    let linksHTML = "";
+    if (data.links && data.links.length > 0) {
+      linksHTML = `
+        <h4>📚 Links Recomendados:</h4>
+        <ul>
+          ${data.links.map(link => `<li><a href="${link.url}" target="_blank">🔗 ${link.titulo}</a></li>`).join("")}
+        </ul>
+      `;
+    }
+
+    dicaResultado.innerHTML = `
+      <div class="investment-card">
+        <h3>${data.perfil}</h3>
+        <div class="investment-details">
+          <p>${data.descricao}</p>
+          <ul>
+            ${data.detalhes.map(item => `<li>📌 ${item}</li>`).join("")}
+          </ul>
+          ${data.extra ? `<p><strong>💬 Dica Personalizada:</strong> ${data.extra}</p>` : ""}
+          ${linksHTML}
+        </div>
+      </div>
+    `;
+
+    dicaSecao.scrollIntoView({ behavior: 'smooth' });
+
+  } catch (erro) {
+    console.error("❌ Erro ao consultar perfil:", erro);
+    alert("Erro ao calcular seu perfil. Tente novamente.");
+  }
+}
+
+
 // Carrega metas ao abrir a página
 window.onload = listarMetas;

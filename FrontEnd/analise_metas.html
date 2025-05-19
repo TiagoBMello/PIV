@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Análise das Metas - LIA</title>
+  <title>LIA - Análise Inteligente</title>
   <link rel="stylesheet" href="css/styles.css">
   <style>
-    .meta-card {
+    .meta-analise {
       background-color: #fff;
       border-left: 5px solid #006400;
       padding: 15px;
-      border-radius: 10px;
       margin: 15px 0;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
     }
-    .meta-card p {
+    .meta-analise p {
       margin: 6px 0;
     }
-    .atrasado {
-      color: red;
+    .status-em-dia {
+      color: green;
       font-weight: bold;
     }
-    .emdia {
-      color: green;
+    .status-atrasado {
+      color: red;
       font-weight: bold;
     }
   </style>
@@ -31,15 +31,14 @@
   <header class="header">
     <img src="images/lia.png" alt="Logo LIA" class="logo">
     <nav class="nav">
-      <button class="nav-button" onclick="window.location.href='planejamento.html'">⬅️ Voltar ao Planejamento</button>
+      <button class="nav-button" onclick="window.location.href='planejamento.html'">🔙 Voltar</button>
     </nav>
   </header>
 
   <main class="main-content">
-    <h1>📊 Análise das Metas</h1>
-    <p>LIA analisou seu progresso e tem recomendações para você:</p>
-
-    <div id="analise-metas"></div>
+    <h1>📈 Análise Inteligente das Metas</h1>
+    <p>Veja se você está no caminho certo para atingir seus objetivos.</p>
+    <div id="resultado-analise"></div>
   </main>
 
   <footer class="footer">
@@ -47,34 +46,35 @@
   </footer>
 
   <script>
-    const user_id = "usuario123"; // depois virá do login
+    const user_id = "usuario123"; // substituir futuramente pelo login
 
     async function carregarAnalise() {
       try {
-        const res = await fetch(`http://localhost:5000/metas/analise/${user_id}`);
-        const dados = await res.json();
-        const container = document.getElementById('analise-metas');
+        const resposta = await fetch(`http://localhost:5000/metas/analise/${user_id}`);
+        const dados = await resposta.json();
 
-        if (!Array.isArray(dados)) {
-          container.innerHTML = `<p style="color:red">Erro: ${dados.erro}</p>`;
-          return;
-        }
-
+        const container = document.getElementById('resultado-analise');
         container.innerHTML = '';
+
         dados.forEach(meta => {
           const div = document.createElement('div');
-          div.className = 'meta-card';
+          div.className = 'meta-analise';
+
           div.innerHTML = `
             <p><strong>${meta.nome}</strong></p>
-            <p>Progresso: ${meta.progresso}%</p>
-            <p>Status: <span class="${meta.status === 'Atrasado' ? 'atrasado' : 'emdia'}">${meta.status}</span></p>
-            <p>Estimativa de Conclusão: ${meta.estimativa_conclusao === '-' ? 'Indefinida' : meta.estimativa_conclusao + ' meses'}</p>
-            <p>Recomendação: Guarde R$${meta.guardar_recomendado.toFixed(2)} por mês para atingir a meta no prazo.</p>
+            <p>🎯 Progresso: ${meta.progresso}%</p>
+            <p>Status: <span class="${meta.status === 'Atrasado' ? 'status-atrasado' : 'status-em-dia'}">${meta.status}</span></p>
+            <p>Prazo total: ${meta.prazo} meses</p>
+            <p>📅 Estimativa de Conclusão: ${meta.estimativa_conclusao} meses</p>
+            <p>💡 Sugestão de valor mensal: R$${meta.guardar_recomendado.toFixed(2)}</p>
           `;
+
           container.appendChild(div);
         });
+
       } catch (erro) {
-        console.error("Erro ao carregar análise:", erro);
+        alert("❌ Erro ao buscar análise das metas.");
+        console.error(erro);
       }
     }
 

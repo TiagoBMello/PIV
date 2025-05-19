@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIA - Quiz do Perfil de Investidor</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .quiz-container {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 30px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .quiz-container h2 {
+      margin-bottom: 15px;
+    }
+    .quiz-container select {
+      margin-bottom: 15px;
+      padding: 8px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <img src="images/lia.png" alt="Logo LIA" class="logo">
+    <nav class="nav">
+      <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
+      <button class="nav-button" onclick="window.location.href='investimentos.html'">💡 Dicas</button>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <h1>🧠 Descubra seu Perfil de Investidor</h1>
+    <p>Responda o quiz abaixo para que a LIA personalize as melhores dicas para você:</p>
+
+    <section class="quiz-container">
+      <div id="quizPerguntas"></div>
+      <button class="cta-button" onclick="enviarQuiz()">🚀 Enviar Respostas</button>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+  </footer>
+
+  <script>
+    const perguntas = [
+      "Qual seu nível de conhecimento em investimentos?",
+      "Como você reage a oscilações na bolsa de valores?",
+      "Você prefere segurança ou retorno alto?",
+      "Qual seu horizonte de tempo para investir?",
+      "Você já investiu antes?",
+      "Como você lida com perdas temporárias?"
+    ];
+
+    const quizContainer = document.getElementById("quizPerguntas");
+    perguntas.forEach((pergunta, index) => {
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <label><strong>${index + 1}. ${pergunta}</strong></label>
+        <select id="resposta${index}">
+          <option value="1">1 - Pouco</option>
+          <option value="2">2 - Médio</option>
+          <option value="3">3 - Muito</option>
+        </select>
+      `;
+      quizContainer.appendChild(div);
+    });
+
+    function enviarQuiz() {
+      const respostas = [];
+      for (let i = 0; i < perguntas.length; i++) {
+        const valor = parseInt(document.getElementById(`resposta${i}`).value);
+        respostas.push(valor);
+      }
+      localStorage.setItem('respostasQuiz', JSON.stringify(respostas));
+      alert("✅ Respostas salvas! Indo para suas dicas...");
+      window.location.href = "dicas_investimentos.html";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIA - Dicas com IA</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="header">
+    <img src="images/lia.png" alt="Logo LIA" class="logo">
+    <nav class="nav">
+      <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <h1>💡 Dicas de Investimentos com IA</h1>
+    <p>Visualize como a IA agrupa os perfis de investidores com base nas respostas do quiz.</p>
+
+    <section class="finance-section">
+      <button class="cta-button" onclick="mostrarGrafico()">📊 Ver Gráfico de IA</button>
+      <canvas id="graficoIA" style="display: none; max-width: 100%; margin-top: 30px;"></canvas>
+      <p id="mensagem-erro" style="color: red; margin-top: 20px;"></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+  </footer>
+
+  <script>
+    async function mostrarGrafico() {
+      const canvas = document.getElementById('graficoIA');
+      const mensagem = document.getElementById('mensagem-erro');
+      canvas.style.display = 'block';
+      mensagem.textContent = '';
+
+      try {
+        const res = await fetch('http://localhost:5000/ia/visualizacao');
+        const dados = await res.json();
+
+        if (!Array.isArray(dados) || dados.length === 0) {
+          mensagem.textContent = '⚠️ Nenhum dado disponível para exibir o gráfico.';
+          canvas.style.display = 'none';
+          return;
+        }
+
+        const cores = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'];
+
+        const agrupados = dados.reduce((acc, ponto) => {
+          const grupo = ponto.cluster;
+          if (!acc[grupo]) acc[grupo] = { x: [], y: [] };
+          acc[grupo].x.push(ponto.x);
+          acc[grupo].y.push(ponto.y);
+          return acc;
+        }, {});
+
+        const datasets = Object.entries(agrupados).map(([cluster, valores], i) => ({
+          label: `Cluster ${cluster}`,
+          data: valores.x.map((x, j) => ({ x, y: valores.y[j] })),
+          backgroundColor: cores[i % cores.length],
+          pointRadius: 6
+        }));
+
+        new Chart(canvas, {
+          type: 'scatter',
+          data: { datasets },
+          options: {
+            plugins: {
+              legend: { position: 'bottom' },
+              title: { display: true, text: 'Distribuição dos Perfis (PCA + KMeans)' }
+            },
+            scales: {
+              x: { title: { display: true, text: 'Componente 1' } },
+              y: { title: { display: true, text: 'Componente 2' } }
+            }
+          }
+        });
+      } catch (erro) {
+        mensagem.textContent = '❌ Erro ao buscar dados da IA.';
+        console.error('Erro ao buscar dados IA:', erro);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -312,6 +312,19 @@ def analisar_meta():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
+@app.route('/dados_clusterizados')
+def dados_clusterizados():
+    dados = [doc["respostas"] for doc in colecao_quiz.find({}, {"_id": 0, "respostas": 1})]
+    if len(dados) < 2:
+        return jsonify({"erro": "Poucos dados para análise."}), 400
+
+    X = np.array(dados)
+    X_pca = PCA(n_components=2).fit_transform(X)
+    kmeans = KMeans(n_clusters=3, random_state=42, n_init=10).fit(X_pca)
+    labels = kmeans.labels_
+
+    pontos = [{"x": float(x), "y": float(y), "cluster": int(c)} for (x, y), c in zip(X_pca, labels)]
+    return jsonify(pontos)
 
 
 # Inicia o servidor
