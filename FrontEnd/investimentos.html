@@ -5,81 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LIA - Dicas Personalizadas</title>
   <link rel="stylesheet" href="css/styles.css">
-  <style>
-    body {
-      background-color: #121212;
-      color: #e0e0e0;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-    .investment-card {
-      background-color: #1e1e1e;
-      border-left: 5px solid #00cc66;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-      color: #fff;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-    }
-    .investment-card h3 {
-      margin-top: 0;
-    }
-    .investment-details ul {
-      margin: 10px 0;
-      padding-left: 20px;
-    }
-    .extra-info {
-      margin-top: 10px;
-      padding: 10px;
-      background-color: #2a2a2a;
-      border-left: 4px solid #00bcd4;
-      border-radius: 6px;
-      font-style: italic;
-    }
-    .useful-links a {
-      display: block;
-      margin-top: 5px;
-      color: #80d8ff;
-      text-decoration: none;
-    }
-    .useful-links a:hover {
-      text-decoration: underline;
-    }
-    .cta-button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #006400;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    .cta-button:hover {
-      background-color: #004d00;
-    }
-    .header, .footer {
-      background-color: #1a1a1a;
-      padding: 10px 20px;
-    }
-    .logo {
-      height: 40px;
-    }
-    .nav-button {
-      background: none;
-      color: #e0e0e0;
-      border: 1px solid #444;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .nav-button:hover {
-      background-color: #333;
-    }
-  </style>
 </head>
 <body>
 
+  <!-- Cabeçalho padrão -->
   <header class="header">
     <img src="images/lia.png" alt="Logo LIA" class="logo">
     <nav class="nav">
@@ -87,23 +16,36 @@
     </nav>
   </header>
 
+  <!-- Conteúdo principal -->
   <main class="main-content">
     <h1>📈 Dicas Personalizadas com IA</h1>
     <p>Baseado em seu perfil de investidor, veja recomendações e conteúdos relevantes.</p>
 
-    <section id="dicaPersonalizada" class="finance-section" style="display: none;">
-      <div id="dicaResultado" class="investment-card"></div>
-      <div style="margin-top: 20px; text-align: center;">
-        <button class="cta-button" onclick="window.location.href='visualizacao_ia.html'">🧠 Ver Visualização com IA</button>
-        <button class="cta-button" onclick="window.location.href='quiz.html'">🔁 Refazer Quiz</button>
+    <section class="dashboard-sections cards-row">
+      <!-- Dica personalizada -->
+      <div id="dicaResultado" class="dica-card"></div>
+
+      <!-- Visualização com IA -->
+      <div class="section-card" onclick="window.location.href='visualizacao_ia.html'">
+        <div class="emoji">🧠</div>
+        <h3>Visualização com IA</h3>
+        <p>Veja como a IA entendeu seu perfil de investimento.</p>
+      </div>
+
+      <!-- Refazer Quiz -->
+      <div class="section-card" onclick="window.location.href='quiz.html'">
+        <div class="emoji">🔁</div>
+        <h3>Refazer Quiz</h3>
+        <p>Atualize seu perfil de investidor respondendo novamente.</p>
       </div>
     </section>
   </main>
-
+  <!-- Rodapé -->
   <footer class="footer">
     <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
   </footer>
 
+  <!-- Script de carregamento da dica -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       fetch('http://localhost:5000/perfil', {
@@ -116,16 +58,14 @@
       })
       .then(res => res.json())
       .then(data => {
-        const dicaSecao = document.getElementById("dicaPersonalizada");
         const dicaResultado = document.getElementById("dicaResultado");
 
         if (data.erro) {
           dicaResultado.innerHTML = `
-            <p style="color: orange;">
+            <p style="color: #d35400;">
               ⚠️ Você ainda não respondeu o quiz para gerar as dicas. 
-              <a href='quiz.html' style="color: #80d8ff;">Clique aqui para fazer</a>.
+              <a href='quiz.html' style="color: #006400; font-weight: bold;">Clique aqui para fazer</a>.
             </p>`;
-          dicaSecao.style.display = "block";
           return;
         }
 
@@ -136,7 +76,8 @@
             </div>` : '';
 
         dicaResultado.innerHTML = `
-          <h3>🎯 Perfil: ${data.perfil}</h3>
+          <div class="emoji">🎯</div>
+          <h3>Perfil: ${data.perfil}</h3>
           <p>${data.descricao}</p>
           <div class="investment-details">
             <ul>
@@ -146,9 +87,9 @@
           ${data.extra ? `<div class="extra-info">🔎 ${data.extra}</div>` : ''}
           ${linksHTML}
         `;
-        dicaSecao.style.display = "block";
       });
     });
   </script>
+
 </body>
 </html>

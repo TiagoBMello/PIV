@@ -1,3 +1,4 @@
+
 /* =============================== */
 /*          CSS GLOBAL            */
 /* =============================== */
@@ -171,315 +172,463 @@ body {
     color: #e0e0e0;
 }
 
+/* ================================== */
+/*     DICAS PERSONALIZADAS (LIA)     */
+/* ================================== */
 
-/* =============================== */
-/* CSS PARA EDUCACAO_FINANCEIRA.HTML */
-/* =============================== */
+.cards-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.dica-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 25px 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  max-width: 320px;
+  min-height: 100%;
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.dica-card .emoji {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
+}
+
+.dica-card h3 {
+  margin-top: 5px;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: #006400;
+}
+
+.investment-details ul {
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.investment-details ul li {
+  margin-bottom: 6px;
+}
+
+.extra-info {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #e9f7ff;
+  border-left: 4px solid #007acc;
+  border-radius: 6px;
+  font-style: italic;
+  color: #003b6f;
+}
+
+.useful-links {
+  margin-top: 15px;
+}
+
+.useful-links h4 {
+  margin-bottom: 5px;
+  color: #006400;
+}
+
+.useful-links a {
+  display: block;
+  margin-top: 5px;
+  color: #006400;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.useful-links a:hover {
+  text-decoration: underline;
+}
+
+/* ============================ */
+/*       RESUMO GERAL LIGHT    */
+/* ============================ */
+
+.meta-card {
+  background-color: #ffffff;
+  border-left: 5px solid #006400;
+  padding: 15px;
+  margin: 12px 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  color: #333;
+}
+
+.meta-card p {
+  margin: 4px 0;
+}
+
+.progress-bar {
+  background-color: #ddd;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 12px;
+  margin-top: 5px;
+}
+
+.progress-bar-fill {
+  background-color: #006400;
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.chart-container {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 30px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.aportes-container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 30px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.aportes-container h2 {
+  text-align: center;
+  color: #006400;
+}
+
+.aportes-container ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 10px;
+}
+
+.aportes-container li {
+  color: #444;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* PLANEJAMENTO - VISUAL MAIS AMPLO E AREJADO */
+
+.goal-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.goal-inputs .input-field {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 220px;
+}
+
+.cta-button {
+  background-color: #006400;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #004d00;
+}
 
 .finance-section {
-    margin: 30px auto;
-    max-width: 800px;
-    background-color: #ffffff;
-    border-left: 5px solid #006400;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    text-align: left;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  max-width: 950px;
 }
 
-.finance-section:hover {
-    transform: translateY(-5px);
+.meta-card {
+  background-color: #ffffff;
+  border-left: 5px solid #006400;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  font-size: 1rem;
 }
 
-.finance-section h2 {
-    color: #004d00;
-    margin-bottom: 15px;
+.meta-card p {
+  margin: 8px 0;
+  line-height: 1.5;
 }
 
-.list {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-    max-width: 600px;
+.deposito-container {
+  margin-top: 12px;
 }
 
-.list li {
-    margin: 10px 0;
-    padding: 12px;
-    background-color: #ffffff;
-    border-left: 5px solid #006400;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s;
+.deposito-input {
+  width: 100px;
+  padding: 7px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 8px;
 }
 
-.list li:hover {
-    transform: translateX(10px);
-    background-color: #e6ffe6;
+.deposito-btn {
+  background-color: #006400;
+  color: white;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.95rem;
 }
 
-.quiz-area {
-    margin-top: 20px;
+.deposito-btn:hover {
+  background-color: #004d00;
 }
 
-/* =============================== */
-/*   CSS PARA INVESTIMENTOS.HTML    */
-/* =============================== */
-
-.investment-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 20px;
+.prioridade-alta {
+  color: red;
+  font-weight: bold;
 }
 
-.investment-card {
-    background-color: #006400;
-    color: #fff;
-    width: 200px;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    transition: transform 0.3s;
+.prioridade-media {
+  color: orange;
+  font-weight: bold;
 }
 
-.investment-card:hover {
-    transform: translateY(-5px);
+.prioridade-baixa {
+  color: gray;
+  font-weight: bold;
 }
 
-.investment-card h3 {
-    margin-bottom: 10px;
+
+/* ============================ */
+/*         LOGIN VISUAL        */
+/* ============================ */
+
+/* Reset da área principal para centralização */
+.main-content.login-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  height: calc(100vh - 160px); /* Altura da tela menos header/footer */
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: #f0f4f7;
 }
 
-.chart {
-    margin-top: 20px;
-    width: 100%;
-    max-width: 600px;
-    height: 300px;
-    margin: 0 auto;
+/* Cartão de login centralizado */
+.login-card {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
 }
 
-/* =============================== */
-/* CSS PARA PLANEJAMENTO.HTML */
-/* =============================== */
-
-.goal-inputs, .budget-inputs {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 400px;
-    margin: 20px auto;
+/* Título */
+.login-card h1 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #006400;
 }
 
-#goal-list {
-    margin-top: 20px;
-    list-style: none;
-    padding-left: 10px;
+/* Formulário */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-#budget-result {
-    margin-top: 15px;
-    font-size: 1.2em;
-    color: #004d00;
-    text-align: center;
-    font-weight: bold;
+/* Campos de entrada */
+.login-form .input-field {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background-color: #f9f9f9;
 }
 
-/* =============================== */
-/* CSS PARA NOTICIAS.HTML */
-/* =============================== */
-
-.news-categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    margin: 20px 0;
+/* Botão de entrar */
+.cta-button {
+  background-color: #006400;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.news-container {
-    margin-top: 20px;
-    text-align: left;
-    max-width: 800px;
-    margin: 0 auto;
+.cta-button:hover {
+  background-color: #004d00;
 }
 
-.news-item {
-    background-color: #fff;
-    margin: 10px 0;
-    padding: 15px;
-    border-left: 5px solid #006400;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
-}
-
-.news-item:hover {
-    transform: translateY(-5px);
-}
-
-/* =============================== */
-/* CSS PARA ADMINISTRADOR.HTML */
-/* =============================== */
-
-.ai-settings {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 400px;
-    margin: 20px auto;
-    text-align: left;
-}
-
-.ai-settings label {
-    font-weight: bold;
-    margin-top: 10px;
-    color: #333;
-}
-
+/* Mensagem de status */
 .status-msg {
-    margin-top: 10px;
-    color: #006400;
-    font-weight: bold;
-}
-
-select.input-field {
-    height: 120px;
-}
-
-.admin-link {
-    color: #ccc;
-    text-decoration: none;
-    font-size: 0.9em;
-    display: block;
-    margin-top: 5px;
-    text-align: right;
-    padding-right: 15px;
-}
-
-.admin-link:hover {
-    color: #fff;
-}
-
-/* =============================== */
-/* CSS PARA ANALISE.HTML */
-/* =============================== */
-
-.analysis-section {
-    margin: 30px auto;
-    max-width: 800px;
-    background-color: #ffffff;
-    border-left: 5px solid #28a745;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    transition: transform 0.3s;
-}
-
-.analysis-section:hover {
-    transform: translateY(-5px);
-}
-
-.analysis-section h2 {
-    color: #004d00;
-    margin-bottom: 15px;
-}
-
-.analysis-charts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    justify-content: center;
-    margin-top: 30px;
-}
-
-.analysis-chart {
-    max-width: 600px;
-    width: 100%;
-    height: 300px;
-    margin: 0 auto;
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 0.95rem;
 }
 
 
-/* =============================== */
-/* CSS PARA NOTICIAS.HTML (ATUALIZADO) */
-/* =============================== */
 
-.news-categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    margin: 20px 0;
+/* ============================ */
+/*     PÁGINA INICIAL LIA      */
+/* ============================ */
+
+html, body {
+  height: 100%;
 }
 
-.news-categories .cta-button {
-    font-size: 1em;
-    padding: 10px 20px;
+body {
+  display: flex;
+  flex-direction: column;
 }
 
-.news-container {
-    margin-top: 20px;
-    text-align: left;
-    max-width: 800px;
-    margin: 0 auto;
+.main-content.welcome-page {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f4f7;
+  margin: 0;
+  padding: 0;
+  min-height: calc(100vh - 140px); /* Altura da tela menos header + footer */
 }
 
-.news-item {
-    background-color: #ffffff;
-    margin: 15px 0;
-    padding: 20px;
-    border-left: 5px solid #006400;
-    border-radius: 10px;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s, box-shadow 0.3s;
+.welcome-card {
+  background-color: #ffffff;
+  padding: 50px 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
 }
 
-.news-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.25);
-    background-color: #f9fff9;
+.welcome-card h1 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #006400;
 }
 
-.news-item h3 {
-    font-size: 1.3em;
-    margin-bottom: 10px;
-    color: #004d00;
+.welcome-card p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  color: #444;
 }
 
-.news-item p {
-    font-size: 1em;
-    margin-bottom: 10px;
+.welcome-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.news-item a {
-    display: inline-block;
-    margin-top: 5px;
-    text-decoration: none;
-    color: #006400;
-    font-weight: bold;
+.welcome-buttons .cta-button {
+  font-size: 1rem;
+  padding: 12px 20px;
+  background-color: #006400;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.news-item a:hover {
-    color: #004d00;
-    text-decoration: underline;
+.welcome-buttons .cta-button:hover {
+  background-color: #004d00;
 }
 
-/* Spinner de carregamento */
-.spinner {
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #006400;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
+
+/* ============================ */
+/*      CADASTRO DE USUÁRIO    */
+/* ============================ */
+
+html, body {
+  height: 100%;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content.cadastro-page {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f4f7;
+  margin: 0;
+  padding: 0;
+  min-height: calc(100vh - 140px); /* espaço útil entre header e footer */
+}
+
+.cadastro-card {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.cadastro-card h1 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #006400;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-form .input-field {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+}
+
+.cta-button {
+  background-color: #006400;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #004d00;
 }

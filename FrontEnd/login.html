@@ -1,69 +1,75 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - LIA</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - LIA</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <header class="header">
-        <img src="images/lia.png" alt="Logo LIA" class="logo">
-        <nav class="nav">
-            <button class="nav-button" onclick="window.location.href='index.html'">🏠 Home</button>
-        </nav>
-    </header>
+  <!-- Cabeçalho padrão -->
+  <header class="header">
+    <img src="images/lia.png" alt="Logo LIA" class="logo">
+    <nav class="nav">
+      <button class="nav-button" onclick="window.location.href='index.html'">Voltar</button>
+    </nav>
+  </header>
 
-    <main class="main-content">
-        <h1>🔐 Faça Login</h1>
+  <!-- Conteúdo principal -->
+  <main class="main-content login-page">
+    <div class="login-card">
+      <h1>🔐 Faça Login</h1>
 
-        <form class="login-form" onsubmit="return validarLogin(event)">
-            <input type="email" id="email" placeholder="Digite seu e-mail" required class="input-field">
-            <input type="password" id="senha" placeholder="Digite sua senha" required class="input-field">
-            <button type="submit" class="cta-button">Entrar</button>
-        </form>
+      <form class="login-form" onsubmit="return validarLogin(event)">
+        <input type="email" id="email" placeholder="Digite seu e-mail" required class="input-field">
+        <input type="password" id="senha" placeholder="Digite sua senha" required class="input-field">
+        <button type="submit" class="cta-button">Entrar</button>
+      </form>
 
-        <div id="login-status" class="status-msg"></div>
-    </main>
+      <div id="login-status" class="status-msg"></div>
+    </div>
+  </main>
 
-    <footer class="footer">
-        <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
-    </footer>
+  <!-- Rodapé -->
+  <footer class="footer">
+    <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+  </footer>
 
-    <script>
-        async function validarLogin(event) {
-            event.preventDefault();
+  <!-- Script de login -->
+  <script>
+    async function validarLogin(event) {
+      event.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
-            const statusMsg = document.getElementById('login-status');
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+      const statusMsg = document.getElementById('login-status');
 
-            try {
-                const response = await fetch('http://127.0.0.1:5000/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, senha })
-                });
+      try {
+        const response = await fetch('http://127.0.0.1:5000/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha })
+        });
 
-                const data = await response.json();
+        const data = await response.json();
 
-                if (response.ok) {
-                    statusMsg.textContent = '✅ Login realizado com sucesso!';
-                    statusMsg.style.color = 'green';
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
-                } else {
-                    statusMsg.textContent = `❌ ${data.erro}`;
-                    statusMsg.style.color = 'red';
-                }
-            } catch (error) {
-                statusMsg.textContent = '❌ Erro ao conectar com o servidor.';
-                statusMsg.style.color = 'red';
-            }
+        if (response.ok) {
+          statusMsg.textContent = '✅ Login realizado com sucesso!';
+          statusMsg.style.color = 'green';
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1000);
+        } else {
+          statusMsg.textContent = `❌ ${data.erro}`;
+          statusMsg.style.color = 'red';
         }
-    </script>
+      } catch (error) {
+        statusMsg.textContent = '❌ Erro ao conectar com o servidor.';
+        statusMsg.style.color = 'red';
+      }
+    }
+  </script>
 
 </body>
 </html>

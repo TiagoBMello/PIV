@@ -286,7 +286,7 @@ def analisar_meta():
         nome_meta = dados.get("nome")
 
         meta = colecao_metas.find_one({"user_id": user_id, "nome": nome_meta})
-        historico = meta.get("historico_aportes", [])
+        historico = sorted(meta.get("historico_aportes", []), key=lambda x: x["data"])
 
         if len(historico) < 2:
             return jsonify({"erro": "Pouco histórico para projeção."}), 400

@@ -1,56 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LIA - Resumo Geral</title>
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body { background-color: #121212; color: #e0e0e0; font-family: sans-serif; }
-    .meta-card {
-      background-color: #1e1e1e;
-      border-left: 5px solid #00cc66;
-      padding: 15px;
-      margin: 12px 0;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-    .meta-card p { margin: 4px 0; }
-    .progress-bar {
-      background-color: #333;
-      border-radius: 20px;
-      overflow: hidden;
-      height: 12px;
-      margin-top: 5px;
-    }
-    .progress-bar-fill {
-      background-color: #00cc66;
-      height: 100%;
-      transition: width 0.5s ease;
-    }
-    .footer, .header {
-      background-color: #1e1e1e;
-      color: white;
-      padding: 10px;
-      text-align: center;
-    }
-    .chart-container {
-      background: #1e1e1e;
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 20px;
-    }
-    ul#lista-aportes li {
-      margin-bottom: 6px;
-    }
-  </style>
 </head>
 <body>
+
+  <!-- Cabeçalho -->
   <header class="header">
     <img src="images/lia.png" alt="Logo LIA" class="logo">
     <nav class="nav">
-      <button class="nav-button" onclick="window.location.href='planejamento.html'">⬅ Voltar ao Planejamento</button>
+      <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
     </nav>
   </header>
 
@@ -67,12 +30,11 @@
       <canvas id="graficoBarra"></canvas>
     </section>
 
-    <section style="margin-top: 30px;">
+    <section class="aportes-container">
       <h2>🕓 Últimos Aportes</h2>
       <ul id="lista-aportes"></ul>
     </section>
   </main>
-
   <footer class="footer">
     <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
   </footer>
@@ -105,7 +67,6 @@
         container.appendChild(div);
       });
 
-      // Gráfico de barras
       const ctx = document.getElementById('graficoBarra').getContext('2d');
       new Chart(ctx, {
         type: 'bar',
@@ -114,20 +75,19 @@
           datasets: [{
             label: 'Total Acumulado (R$)',
             data: acumulados,
-            backgroundColor: '#00cc66'
+            backgroundColor: 'rgba(0, 100, 0, 0.7)'
           }]
         },
         options: {
           scales: {
-            y: { beginAtZero: true, ticks: { color: '#ccc' }, grid: { color: '#333' } },
-            x: { ticks: { color: '#ccc' }, grid: { color: '#333' } }
+            y: { beginAtZero: true },
+            x: {}
           },
           plugins: {
             legend: { display: false },
             title: {
               display: true,
               text: 'Acumulado por Meta',
-              color: '#fff',
               font: { size: 16 }
             }
           }
@@ -161,7 +121,8 @@
     window.onload = () => {
       carregarResumo();
       carregarHistorico();
-    }
+    };
   </script>
+
 </body>
 </html>

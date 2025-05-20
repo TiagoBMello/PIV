@@ -11,21 +11,24 @@
     <header class="header">
         <img src="images/lia.png" alt="Logo LIA" class="logo">
         <nav class="nav">
-            <button class="nav-button" onclick="window.location.href='index.html'">🏠 Home</button>
+            <button class="nav-button" onclick="window.location.href='index.html'">Voltar</button>
         </nav>
     </header>
 
-    <main class="main-content">
-        <h1>🆕 Crie sua Conta</h1>
+   <main class="main-content cadastro-page">
+  <div class="cadastro-card">
+    <h1>🆕 Crie sua Conta</h1>
 
-        <form class="login-form" onsubmit="return validarFormulario(event)">
-            <input type="text" id="nome" placeholder="Digite seu nome completo" required class="input-field">
-            <input type="email" id="email" placeholder="Digite seu e-mail" required class="input-field">
-            <input type="password" id="senha" placeholder="Digite sua senha" required class="input-field">
-            <input type="password" id="confirmarSenha" placeholder="Confirme sua senha" required class="input-field">
-            <button type="submit" class="cta-button">Criar Conta</button>
-        </form>
-    </main>
+    <form class="login-form" onsubmit="return validarFormulario(event)">
+      <input type="text" id="nome" placeholder="Digite seu nome completo" required class="input-field">
+      <input type="email" id="email" placeholder="Digite seu e-mail" required class="input-field">
+      <input type="password" id="senha" placeholder="Digite sua senha" required class="input-field">
+      <input type="password" id="confirmarSenha" placeholder="Confirme sua senha" required class="input-field">
+      <button type="submit" class="cta-button">Criar Conta</button>
+    </form>
+</div>
+</main>
+
 
     <footer class="footer">
         <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
