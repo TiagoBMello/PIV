@@ -6,13 +6,20 @@
   <title>LIA - Dicas Personalizadas</title>
   <link rel="stylesheet" href="css/styles.css">
   <style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
     .investment-card {
-      background-color: #ffffff;
-      border-left: 5px solid #006400;
+      background-color: #1e1e1e;
+      border-left: 5px solid #00cc66;
       padding: 15px;
       border-radius: 10px;
       margin-top: 20px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      color: #fff;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
     }
     .investment-card h3 {
       margin-top: 0;
@@ -24,15 +31,15 @@
     .extra-info {
       margin-top: 10px;
       padding: 10px;
-      background-color: #f0f8ff;
-      border-left: 4px solid #007acc;
+      background-color: #2a2a2a;
+      border-left: 4px solid #00bcd4;
       border-radius: 6px;
       font-style: italic;
     }
     .useful-links a {
       display: block;
       margin-top: 5px;
-      color: #006400;
+      color: #80d8ff;
       text-decoration: none;
     }
     .useful-links a:hover {
@@ -46,13 +53,33 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 1rem;
     }
     .cta-button:hover {
       background-color: #004d00;
     }
+    .header, .footer {
+      background-color: #1a1a1a;
+      padding: 10px 20px;
+    }
+    .logo {
+      height: 40px;
+    }
+    .nav-button {
+      background: none;
+      color: #e0e0e0;
+      border: 1px solid #444;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .nav-button:hover {
+      background-color: #333;
+    }
   </style>
 </head>
 <body>
+
   <header class="header">
     <img src="images/lia.png" alt="Logo LIA" class="logo">
     <nav class="nav">
@@ -66,7 +93,10 @@
 
     <section id="dicaPersonalizada" class="finance-section" style="display: none;">
       <div id="dicaResultado" class="investment-card"></div>
-      <button class="cta-button" onclick="window.location.href='visualizacao_ia.html'">🧠 Visualizar IA (PCA + KMeans)</button>
+      <div style="margin-top: 20px; text-align: center;">
+        <button class="cta-button" onclick="window.location.href='visualizacao_ia.html'">🧠 Ver Visualização com IA</button>
+        <button class="cta-button" onclick="window.location.href='quiz.html'">🔁 Refazer Quiz</button>
+      </div>
     </section>
   </main>
 
@@ -76,25 +106,35 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const respostasSalvas = localStorage.getItem('respostasQuiz');
-      if (!respostasSalvas) return;
-
       fetch('http://localhost:5000/perfil', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: 'usuario123',
-          respostas: JSON.parse(respostasSalvas)
+          respostas: JSON.parse(localStorage.getItem('respostasQuiz')) || []
         })
       })
       .then(res => res.json())
       .then(data => {
-        if (data.erro) return;
-
         const dicaSecao = document.getElementById("dicaPersonalizada");
         const dicaResultado = document.getElementById("dicaResultado");
 
-        dicaSecao.style.display = "block";
+        if (data.erro) {
+          dicaResultado.innerHTML = `
+            <p style="color: orange;">
+              ⚠️ Você ainda não respondeu o quiz para gerar as dicas. 
+              <a href='quiz.html' style="color: #80d8ff;">Clique aqui para fazer</a>.
+            </p>`;
+          dicaSecao.style.display = "block";
+          return;
+        }
+
+        const linksHTML = data.links?.length
+          ? `<div class="useful-links">
+              <h4>📚 Conteúdos úteis:</h4>
+              ${data.links.map(link => `<a href="${link.url}" target="_blank">🔗 ${link.titulo}</a>`).join('')}
+            </div>` : '';
+
         dicaResultado.innerHTML = `
           <h3>🎯 Perfil: ${data.perfil}</h3>
           <p>${data.descricao}</p>
@@ -104,11 +144,9 @@
             </ul>
           </div>
           ${data.extra ? `<div class="extra-info">🔎 ${data.extra}</div>` : ''}
-          ${data.links?.length ? `<div class="useful-links">
-            <h4>📚 Conteúdos úteis:</h4>
-            ${data.links.map(link => `<a href="${link.url}" target="_blank">🔗 ${link.titulo}</a>`).join('')}
-          </div>` : ''}
+          ${linksHTML}
         `;
+        dicaSecao.style.display = "block";
       });
     });
   </script>
