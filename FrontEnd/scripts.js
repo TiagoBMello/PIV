@@ -1,5 +1,3 @@
-// scripts.js (etapa final do Planejamento)
-
 console.log("LIA - Planejamento IA finalizado!");
 
 const user_id = "usuario123"; // virá do login futuramente
@@ -30,7 +28,7 @@ async function adicionarMeta() {
   }
 }
 
-// 📋 Lista metas e exibe progresso, atraso e botões
+// 📋 Lista metas e exibe progresso e botões de aporte/remover
 async function listarMetas() {
   try {
     const resposta = await fetch(`http://localhost:5000/metas/${user_id}`);
@@ -40,13 +38,7 @@ async function listarMetas() {
 
     metas.forEach(meta => {
       const acumulado = meta.acumulado || 0;
-      const restante = meta.valor - acumulado;
       const progresso = Math.min(100, (acumulado / meta.valor) * 100).toFixed(0);
-      const mesesRestantes = meta.prazo;
-      const necessarioPorMes = (meta.valor / meta.prazo).toFixed(2);
-      const ritmoAtual = (acumulado / meta.prazo).toFixed(2);
-      const previsaoConclusao = ritmoAtual > 0 ? Math.ceil((meta.valor - acumulado) / ritmoAtual) : '∞';
-      const atrasado = acumulado < (meta.valor / meta.prazo) * (meta.prazo - mesesRestantes + 1);
 
       const div = document.createElement('div');
       div.className = 'meta-card';
@@ -55,11 +47,17 @@ async function listarMetas() {
         <p>Valor total: R$${meta.valor.toFixed(2)} | Acumulado: R$${acumulado.toFixed(2)}</p>
         <p>Prazo: ${meta.prazo} meses | Prioridade: <span class="prioridade-${meta.prioridade}">${meta.prioridade.toUpperCase()}</span></p>
         <p>🎯 Progresso: ${progresso}%</p>
-        ${atrasado ? `<p style="color: red">⚠️ Atrasado - Se continuar nesse ritmo, você atingirá em ${previsaoConclusao} meses.</p>
-        <p>💡 Recomendo guardar R$${necessarioPorMes} por mês para alcançar no prazo.</p>` : ''}
-        ${progresso >= 100 ? `<button onclick="retirarFundos('${meta.nome}')">💸 Retirar Fundos</button>` : ''}
-      `;
 
+        ${progresso >= 100
+          ? `<button onclick="retirarFundos('${meta.nome}')">💸 Retirar Fundos</button>`
+          : `
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+              <input type="number" placeholder="Quanto deseja adicionar?" id="aporte-${meta.nome}" style="flex:1; padding: 5px;" />
+              <button onclick="fazerAporte('${meta.nome}')">💰 Fazer Aporte</button>
+              <button onclick="verGrafico('${meta.nome}')" style="background-color:#007acc;color:#fff;padding:8px;border:none;border-radius:5px;cursor:pointer;">📈 Ver Gráfico</button>
+            </div>
+          `}
+      `;
       lista.appendChild(div);
     });
   } catch (erro) {
@@ -67,11 +65,13 @@ async function listarMetas() {
   }
 }
 
-// 🤖 Distribuição com IA
+
+
+// 🤖 Distribuição automática com IA (opcional)
 async function calcularDistribuicao() {
-  const valor_mensal = parseFloat(document.getElementById('valor-mensal').value);
+  const valor_mensal = parseFloat(prompt("Quanto você deseja distribuir entre as metas esse mês?"));
   if (isNaN(valor_mensal) || valor_mensal <= 0) {
-    alert("⚠️ Informe quanto você pode guardar por mês.");
+    alert("⚠️ Valor inválido.");
     return;
   }
 
@@ -96,51 +96,53 @@ async function retirarFundos(nomeMeta) {
   if (!confirmacao) return;
 
   try {
-    await fetch(`http://localhost:5000/metas/deletar/${user_id}/${encodeURIComponent(nomeMeta)}`, {
+    const resposta = await fetch(`http://localhost:5000/metas/deletar/${user_id}/${encodeURIComponent(nomeMeta)}`, {
       method: "DELETE"
     });
-    listarMetas();
+
+    const dados = await resposta.json();
+
+    if (resposta.ok) {
+      alert("✅ Meta removida com sucesso!");
+      listarMetas();
+    } else {
+      alert(`❌ Erro: ${dados.erro || "Erro ao excluir meta concluída."}`);
+    }
   } catch (erro) {
-    alert("❌ Erro ao excluir meta concluída.");
+    alert("❌ Erro de conexão com o servidor ao tentar excluir a meta.");
+    console.error("Erro:", erro);
   }
 }
 
-// Atualiza aporte e analisa previsão para cada meta
-
-async function analisarMeta(nome) {
-  const user_id = "usuario123";
-
-  // Registrar um novo aporte (exemplo automático de R$ 100)
-  const valor = 100; // Aqui no futuro você pode pedir pro usuário definir
-  await fetch("http://localhost:5000/historico", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id, nome, valor })
-  });
-
-  // Consultar análise preditiva
-  const resposta = await fetch("http://localhost:5000/projecao", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id, nome })
-  });
-
-  const dados = await resposta.json();
-
-  if (!resposta.ok) {
-    alert(`❌ Erro: ${dados.erro}`);
+// 🔁 Faz um aporte de R$100 e consulta previsão
+async function fazerAporte(nomeMeta) {
+  const input = document.getElementById(`aporte-${nomeMeta}`);
+  const valor = parseFloat(input.value);
+  if (isNaN(valor) || valor <= 0) {
+    alert("⚠️ Informe um valor válido para o aporte.");
     return;
   }
 
-  let mensagem = `📈 Acumulado: R$ ${dados.acumulado}\n` +
-                 `🎯 Valor restante: R$ ${dados.restante}\n` +
-                 `📊 Média mensal: R$ ${dados.media_mensal.toFixed(2)}\n` +
-                 `⏳ Estimativa de conclusão: ${dados.meses_estimados} meses\n` +
-                 `💡 Sugestão de aporte ideal: R$ ${dados.recomendado_mensal.toFixed(2)}`;
+  // Registra o histórico no backend
+  const res = await fetch("http://localhost:5000/historico", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id, nome: nomeMeta, valor })
+  });
 
-  alert(mensagem);
+  const dados = await res.json();
+
+  if (res.ok) {
+    alert("✅ Aporte registrado com sucesso!");
+    input.value = ""; // limpa o campo
+    listarMetas(); // atualiza a tela
+  } else {
+    alert("❌ Erro ao registrar aporte: " + dados.erro);
+  }
 }
 
+
+// Calcula perfil de investidor
 async function calcularPerfil() {
   const perguntas = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'];
   let respostas = [];
@@ -153,8 +155,6 @@ async function calcularPerfil() {
     }
     respostas.push(parseInt(val.value));
   }
-
-  const user_id = "usuario123"; // ← depois será dinâmico
 
   try {
     const response = await fetch("http://localhost:5000/perfil", {
@@ -206,6 +206,45 @@ async function calcularPerfil() {
   }
 }
 
+async function fazerAporte(nome) {
+  const input = document.getElementById(`aporte-${nome}`);
+  const valor = parseFloat(input.value);
 
-// Carrega metas ao abrir a página
+  if (isNaN(valor) || valor <= 0) {
+    alert("⚠️ Digite um valor válido para o aporte.");
+    return;
+  }
+
+  // Registra no histórico
+  await fetch("http://localhost:5000/historico", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id, nome, valor })
+  });
+
+  // Atualiza o acumulado na meta
+  const respostaAtualiza = await fetch(`http://localhost:5000/metas/${user_id}/atualizar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nome, valor })
+  });
+
+  const dados = await respostaAtualiza.json();
+
+  if (respostaAtualiza.ok) {
+    alert("✅ Aporte realizado com sucesso!");
+    listarMetas();  // Atualiza a UI com o novo acumulado
+  } else {
+    alert(`❌ Erro: ${dados.erro || "Erro ao atualizar meta."}`);
+  }
+}
+
+
+function verGrafico(nomeMeta) {
+  localStorage.setItem('metaParaGrafico', nomeMeta);
+  window.location.href = 'grafico_regressao.html';
+}
+
+
+// Carrega metas ao abrir
 window.onload = listarMetas;

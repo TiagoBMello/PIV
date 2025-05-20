@@ -32,34 +32,31 @@
       color: gray;
     }
 
-    .btn-retirar, .btn-analisar {
+    .deposito-container {
+      margin-top: 10px;
+    }
+
+    .deposito-input {
+      width: 100px;
+      padding: 5px;
+      margin-right: 5px;
+    }
+
+    .deposito-btn {
       background-color: #006400;
       color: white;
       border: none;
       padding: 6px 12px;
-      margin: 8px 5px 0 0;
       border-radius: 5px;
       cursor: pointer;
     }
 
-    .btn-retirar {
-      background-color: #cc0000;
-    }
-
-    .btn-retirar:hover {
-      background-color: #a30000;
-    }
-
-    .btn-analisar:hover {
+    .deposito-btn:hover {
       background-color: #004d00;
     }
 
-    .analise-feedback {
-      margin-top: 8px;
-      font-size: 0.9em;
-      background-color: #f0f0f0;
-      padding: 10px;
-      border-radius: 8px;
+    .progresso {
+      font-weight: bold;
     }
   </style>
 </head>
@@ -68,24 +65,14 @@
 <header class="header">
   <img src="images/lia.png" alt="Logo LIA" class="logo">
   <nav class="nav">
+    <button class="nav-button" onclick="window.location.href='analise_metas.html'">📊 Análise Inteligente</button>
     <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
   </nav>
 </header>
 
-<section class="finance-section">
-  <h2>🔍 Quer saber como está sua evolução?</h2>
-  <p>Acompanhe se você está no caminho certo para atingir suas metas.</p>
-  <button class="cta-button" onclick="window.location.href='analise_metas.html'">📊 Ver Análise Inteligente</button>
-</section>
-
 <main class="main-content">
   <h1>📦 Planejamento Financeiro Inteligente</h1>
-  <p>Defina suas metas e deixe a LIA ajudar você a alcançá-las!</p>
-
-  <section class="finance-section">
-    <h2>💰 Quanto você pode guardar por mês?</h2>
-    <input type="number" id="valor-mensal" class="input-field" placeholder="Ex: 500" />
-  </section>
+  <p>Defina suas metas e acompanhe o progresso!</p>
 
   <section class="finance-section">
     <h2>🎯 Adicionar Meta</h2>
@@ -106,7 +93,6 @@
   <section class="finance-section">
     <h2>📋 Suas Metas</h2>
     <div id="lista-metas"></div>
-    <button class="cta-button" onclick="calcularDistribuicao()">📊 Calcular Distribuição</button>
   </section>
 </main>
 

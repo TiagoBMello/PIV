@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIA - Gráfico de Regressão</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="header">
+    <img src="images/lia.png" alt="Logo LIA" class="logo">
+    <nav class="nav">
+      <button class="nav-button" onclick="window.location.href='planejamento.html'">⬅ Voltar</button>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <h1>📊 Evolução dos Aportes</h1>
+    <p>Veja como seus aportes evoluíram ao longo do tempo e a projeção futura com base em regressão linear.</p>
+
+    <section class="finance-section">
+      <input type="text" id="meta-input" class="input-field" placeholder="Digite o nome da meta">
+      <button class="cta-button" onclick="carregarGrafico()">📈 Gerar Gráfico</button>
+      <canvas id="graficoRegressao" style="max-width: 700px; margin-top: 30px;"></canvas>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+  </footer>
+
+  <script>
+     window.onload = () => {
+    const nomeSalvo = localStorage.getItem('metaParaGrafico');
+    if (nomeSalvo) {
+      document.getElementById('meta-input').value = nomeSalvo;
+      carregarGrafico(); // já carrega ao entrar
+      localStorage.removeItem('metaParaGrafico'); // limpa após usar
+    }
+  };
+
+    async function carregarGrafico() {
+      const nome = document.getElementById('meta-input').value;
+      if (!nome) {
+        alert("⚠️ Informe o nome da meta!");
+        return;
+      }
+
+      const res = await fetch('http://localhost:5000/projecao', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: 'usuario123', nome })
+      });
+
+      const dados = await res.json();
+      if (!res.ok) {
+        alert(`❌ Erro: ${dados.erro}`);
+        return;
+      }
+
+      const valores = Array.from({ length: dados.meses_estimados }, (_, i) => i + 1);
+      const y_real = [];
+      let acumulado = 0;
+      for (let i = 0; i < valores.length; i++) {
+        acumulado += dados.media_mensal;
+        y_real.push(acumulado);
+      }
+
+      const ctx = document.getElementById('graficoRegressao').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: valores,
+          datasets: [
+            {
+              label: 'Previsão de Crescimento',
+              data: y_real,
+              borderWidth: 2,
+              borderColor: '#006400',
+              backgroundColor: 'rgba(0, 100, 0, 0.1)',
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          scales: {
+            x: {
+              title: { display: true, text: 'Meses' }
+            },
+            y: {
+              title: { display: true, text: 'Acumulado (R$)' }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: `Projeção para: ${nome}`
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

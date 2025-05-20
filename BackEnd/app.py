@@ -4,7 +4,7 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from pymongo import MongoClient
 import numpy as np
-import datetime
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -171,12 +171,15 @@ def adicionar_meta():
             "prazo": int(dados.get("prazo")),
             "prioridade": dados.get("prioridade"),
             "acumulado": 0.0,
-            "criada_em": datetime.datetime.utcnow()
+            "criada_em": datetime.utcnow()
         }
-        colecao_metas.insert_one(meta)
+        db.metas.insert_one(meta)
+        print(f"✅ Meta '{meta['nome']}' cadastrada para o usuário {meta['user_id']}.")
         return jsonify({"mensagem": "Meta cadastrada com sucesso."}), 201
     except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+        print("❗ Erro ao cadastrar meta:", str(e))  # ← Aqui vamos ver o erro real no terminal
+        return jsonify({"erro": "Erro ao cadastrar a meta."}), 500
+
 
 # Rota para listar metas de um usuário
 @app.route('/metas/<user_id>', methods=['GET'])
@@ -325,6 +328,39 @@ def dados_clusterizados():
 
     pontos = [{"x": float(x), "y": float(y), "cluster": int(c)} for (x, y), c in zip(X_pca, labels)]
     return jsonify(pontos)
+
+
+@app.route('/metas/deletar/<user_id>/<nome_meta>', methods=['DELETE'])
+def deletar_meta(user_id, nome_meta):
+    try:
+        resultado = colecao_metas.delete_one({"user_id": user_id, "nome": nome_meta})
+        if resultado.deleted_count == 1:
+            return jsonify({"mensagem": "Meta deletada com sucesso!"})
+        else:
+            return jsonify({"erro": "Meta não encontrada."}), 404
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+
+@app.route('/metas/<user_id>/atualizar', methods=['POST'])
+def atualizar_acumulado(user_id):
+    try:
+        dados = request.get_json()
+        nome = dados.get("nome")
+        valor = float(dados.get("valor"))
+
+        resultado = colecao_metas.update_one(
+            {"user_id": user_id, "nome": nome},
+            {"$inc": {"acumulado": valor}}
+        )
+
+        if resultado.modified_count == 1:
+            return jsonify({"mensagem": "Acumulado atualizado com sucesso."})
+        else:
+            return jsonify({"erro": "Meta não encontrada."}), 404
+
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 
 
 # Inicia o servidor
