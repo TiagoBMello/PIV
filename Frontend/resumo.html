@@ -7,11 +7,43 @@
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { background-color: #121212; color: #e0e0e0; }
-    .meta-card { background-color: #1e1e1e; border-left: 5px solid #00cc66; padding: 10px; margin: 10px 0; border-radius: 10px; }
+    body { background-color: #121212; color: #e0e0e0; font-family: sans-serif; }
+    .meta-card {
+      background-color: #1e1e1e;
+      border-left: 5px solid #00cc66;
+      padding: 15px;
+      margin: 12px 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
     .meta-card p { margin: 4px 0; }
-    .footer, .header { background-color: #1e1e1e; color: white; }
-    .chart-container { background: #1e1e1e; border-radius: 12px; padding: 15px; }
+    .progress-bar {
+      background-color: #333;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 12px;
+      margin-top: 5px;
+    }
+    .progress-bar-fill {
+      background-color: #00cc66;
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+    .footer, .header {
+      background-color: #1e1e1e;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+    .chart-container {
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    ul#lista-aportes li {
+      margin-bottom: 6px;
+    }
   </style>
 </head>
 <body>
@@ -35,8 +67,8 @@
       <canvas id="graficoBarra"></canvas>
     </section>
 
-    <section>
-      <h2>🕓 Histórico de Aportes</h2>
+    <section style="margin-top: 30px;">
+      <h2>🕓 Últimos Aportes</h2>
       <ul id="lista-aportes"></ul>
     </section>
   </main>
@@ -55,18 +87,25 @@
       container.innerHTML = '';
 
       metas.forEach(meta => {
+        const acumulado = meta.acumulado || 0;
+        const progresso = Math.min(100, (acumulado / meta.valor) * 100).toFixed(0);
+
         nomes.push(meta.nome);
-        acumulados.push(meta.acumulado);
+        acumulados.push(acumulado);
+
         const div = document.createElement('div');
         div.className = 'meta-card';
         div.innerHTML = `
           <p><strong>${meta.nome}</strong></p>
-          <p>Valor: R$${meta.valor.toFixed(2)} | Acumulado: R$${(meta.acumulado || 0).toFixed(2)}</p>
-          <p>Prazo: ${meta.prazo} meses | Prioridade: ${meta.prioridade}</p>
+          <p>Valor total: <strong>R$${meta.valor.toFixed(2)}</strong> | Acumulado: <strong>R$${acumulado.toFixed(2)}</strong></p>
+          <p>Prazo: ${meta.prazo} meses | Prioridade: <span style="text-transform: uppercase;">${meta.prioridade}</span></p>
+          <p>Progresso: ${progresso}%</p>
+          <div class="progress-bar"><div class="progress-bar-fill" style="width: ${progresso}%;"></div></div>
         `;
         container.appendChild(div);
       });
 
+      // Gráfico de barras
       const ctx = document.getElementById('graficoBarra').getContext('2d');
       new Chart(ctx, {
         type: 'bar',
@@ -80,11 +119,17 @@
         },
         options: {
           scales: {
-            y: { beginAtZero: true }
+            y: { beginAtZero: true, ticks: { color: '#ccc' }, grid: { color: '#333' } },
+            x: { ticks: { color: '#ccc' }, grid: { color: '#333' } }
           },
           plugins: {
             legend: { display: false },
-            title: { display: true, text: 'Acumulado por Meta' }
+            title: {
+              display: true,
+              text: 'Acumulado por Meta',
+              color: '#fff',
+              font: { size: 16 }
+            }
           }
         }
       });
@@ -95,8 +140,11 @@
       const lista = document.getElementById('lista-aportes');
       lista.innerHTML = '';
 
+      let encontrado = false;
       metas.forEach(meta => {
         const historico = meta.historico_aportes || [];
+        if (historico.length > 0) encontrado = true;
+
         historico.slice(-5).reverse().forEach(h => {
           const li = document.createElement('li');
           const data = new Date(h.data).toLocaleDateString();
@@ -104,6 +152,10 @@
           lista.appendChild(li);
         });
       });
+
+      if (!encontrado) {
+        lista.innerHTML = "<li style='color:gray'>Nenhum aporte recente encontrado.</li>";
+      }
     }
 
     window.onload = () => {
