@@ -219,6 +219,12 @@ def contribuir_para_metas():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
     
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
 @app.route('/metas/analise/<user_id>', methods=['GET'])
 def analisar_progresso(user_id):
     try:
@@ -230,20 +236,36 @@ def analisar_progresso(user_id):
             valor_total = meta["valor"]
             acumulado = meta.get("acumulado", 0)
             prazo = meta["prazo"]
-            criada_em = meta["criada_em"]
-            meses_passados = max(1, (hoje.year - criada_em.year) * 12 + hoje.month - criada_em.month)
-            media_necessaria = valor_total / prazo
-            media_atual = acumulado / meses_passados
+            historico = sorted(meta.get("historico_aportes", []), key=lambda x: x["data"])
 
             progresso = round((acumulado / valor_total) * 100, 2)
-            status = "Em dia" if media_atual >= media_necessaria else "Atrasado"
 
-            if status == "Atrasado":
-                meses_estimados = int((valor_total - acumulado) / media_atual) if media_atual > 0 else "-"
-                recomendacao = round((valor_total - acumulado) / (prazo - meses_passados), 2) if prazo > meses_passados else valor_total - acumulado
+            if len(historico) >= 2:
+                # Preparar dados para regressão
+                X = np.array(range(1, len(historico) + 1)).reshape(-1, 1)
+                y = np.cumsum([h["valor"] for h in historico]).reshape(-1, 1)
+
+                modelo = LinearRegression().fit(X, y)
+
+                inclinacao = modelo.coef_[0][0]
+                intercepto = modelo.intercept_[0]
+
+                if inclinacao <= 0:
+                    meses_estimados = "-"
+                    recomendacao = valor_total - acumulado
+                    status = "Atrasado"
+                else:
+                    passos_para_concluir = (valor_total - intercepto) / inclinacao
+                    meses_estimados = max(0, round(passos_para_concluir - len(historico)))
+
+                    status = "Em dia" if meses_estimados + len(historico) <= prazo else "Atrasado"
+
+                    recomendacao = inclinacao  # valor médio estimado por aporte
+
             else:
                 meses_estimados = "-"
-                recomendacao = media_necessaria
+                recomendacao = (valor_total - acumulado) if acumulado < valor_total else 0
+                status = "Atrasado" if acumulado < valor_total else "Concluído"
 
             analise.append({
                 "nome": meta["nome"],
@@ -255,28 +277,16 @@ def analisar_progresso(user_id):
             })
 
         return jsonify(analise)
+
     except Exception as e:
+        print("❗ Erro na análise:", str(e))
         return jsonify({"erro": str(e)}), 500
-    
-    # Cole esse bloco ANTES do "if __name__ == '__main__':"
+
+
+
+from dateutil.relativedelta import relativedelta
 
 from sklearn.linear_model import LinearRegression
-
-@app.route('/historico', methods=['POST'])
-def registrar_historico():
-    try:
-        dados = request.get_json()
-        user_id = dados.get("user_id")
-        nome_meta = dados.get("nome")
-        valor = float(dados.get("valor"))
-
-        colecao_metas.update_one(
-            {"user_id": user_id, "nome": nome_meta},
-            {"$push": {"historico_aportes": {"valor": valor, "data": datetime.utcnow()}}}
-        )
-        return jsonify({"mensagem": "Histórico registrado."})
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
 
 @app.route('/projecao', methods=['POST'])
 def analisar_meta():
@@ -289,45 +299,90 @@ def analisar_meta():
         historico = sorted(meta.get("historico_aportes", []), key=lambda x: x["data"])
 
         if len(historico) < 2:
-            return jsonify({"erro": "Pouco histórico para projeção."}), 400
+            return jsonify({"erro": "Pouco histórico para gerar a regressão."}), 400
 
-        valores = [h["valor"] for h in historico]
-        acumulado = sum(valores)
-        restante = meta["valor"] - acumulado
+        labels = []
+        acumulado_ate_agora = []
+        soma = 0
 
-        X = np.array(range(1, len(valores)+1)).reshape(-1, 1)
-        y = np.array(valores).reshape(-1, 1)
+        for idx, h in enumerate(historico):
+            label = f"Mês {idx + 1}"
+            labels.append(label)
+
+            soma += h["valor"]
+            acumulado_ate_agora.append(round(soma, 2))
+
+        # Dados para regressão
+        X = np.array(range(1, len(acumulado_ate_agora) + 1)).reshape(-1, 1)
+        y = np.array(acumulado_ate_agora).reshape(-1, 1)
 
         modelo = LinearRegression().fit(X, y)
-        media = modelo.coef_[0][0]
+        inclinacao = modelo.coef_[0][0]
+        intercepto = modelo.intercept_[0]
 
-        meses_estimados = int(np.ceil(restante / media)) if media > 0 else -1
-        recomendado = round(meta["valor"] / meta["prazo"], 2)
+        # Fazer projeção para mais 12 meses (ou aportes futuros)
+        quantidade_futura = 12
+        X_futuro = np.array(range(len(acumulado_ate_agora) + 1, len(acumulado_ate_agora) + quantidade_futura + 1)).reshape(-1, 1)
+        y_futuro = modelo.predict(X_futuro).flatten().tolist()
+
+        labels_futuro = [f"Mês {i}" for i in range(len(acumulado_ate_agora) + 1, len(acumulado_ate_agora) + quantidade_futura + 1)]
 
         return jsonify({
-            "acumulado": round(acumulado, 2),
-            "restante": round(restante, 2),
-            "media_mensal": round(media, 2),
-            "meses_estimados": meses_estimados,
-            "recomendado_mensal": recomendado
+            "labels": labels,
+            "acumulado": acumulado_ate_agora,
+            "labels_futuro": labels_futuro,
+            "acumulado_futuro": y_futuro,
+            "inclinacao": round(inclinacao, 2),
+            "intercepto": round(intercepto, 2)
         })
 
     except Exception as e:
+        print("❗ Erro na projeção:", str(e))
         return jsonify({"erro": str(e)}), 500
+
+
+
 
 @app.route('/dados_clusterizados')
 def dados_clusterizados():
-    dados = [doc["respostas"] for doc in colecao_quiz.find({}, {"_id": 0, "respostas": 1})]
-    if len(dados) < 2:
-        return jsonify({"erro": "Poucos dados para análise."}), 400
+    try:
+        # Buscar todas as respostas do quiz
+        dados = list(colecao_quiz.find({}, {"_id": 0, "respostas": 1}))
 
-    X = np.array(dados)
-    X_pca = PCA(n_components=2).fit_transform(X)
-    kmeans = KMeans(n_clusters=3, random_state=42, n_init=10).fit(X_pca)
-    labels = kmeans.labels_
+        if len(dados) < 2:
+            return jsonify({"erro": "Poucos dados para análise."}), 400
 
-    pontos = [{"x": float(x), "y": float(y), "cluster": int(c)} for (x, y), c in zip(X_pca, labels)]
-    return jsonify(pontos)
+        # Extrair as respostas
+        respostas_lista = [doc["respostas"] for doc in dados]
+        X = np.array(respostas_lista)
+
+        # Aplicar PCA
+        pca = PCA(n_components=2)
+        X_pca = pca.fit_transform(X)
+
+        # Aplicar KMeans
+        kmeans = KMeans(n_clusters=3, random_state=42, n_init=10).fit(X_pca)
+        labels = kmeans.labels_
+
+        # Definir os nomes dos perfis
+        nomes_perfil = ["Conservador", "Moderado", "Agressivo"]
+
+        # Montar os dados para o gráfico
+        pontos = []
+        for (x, y), cluster, respostas in zip(X_pca, labels, respostas_lista):
+            pontos.append({
+                "x": float(x),
+                "y": float(y),
+                "cluster": int(cluster),
+                "perfil": nomes_perfil[cluster],
+                "respostas": respostas
+            })
+
+        return jsonify(pontos)
+
+    except Exception as e:
+        print("❗ Erro na rota /dados_clusterizados:", str(e))
+        return jsonify({"erro": str(e)}), 500
 
 
 @app.route('/metas/deletar/<user_id>/<nome_meta>', methods=['DELETE'])
@@ -361,6 +416,59 @@ def atualizar_acumulado(user_id):
 
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
+
+# Coleção de usuários
+colecao_usuarios = db.usuarios
+
+# Rota de cadastro de usuário
+@app.route('/cadastrar', methods=['POST'])
+def cadastrar_usuario():
+    try:
+        dados = request.get_json()
+        nome = dados.get('nome')
+        email = dados.get('email')
+        senha = dados.get('senha')
+
+        if not nome or not email or not senha:
+            return jsonify({"erro": "Todos os campos são obrigatórios."}), 400
+
+        if colecao_usuarios.find_one({'email': email}):
+            return jsonify({"erro": "Email já cadastrado."}), 400
+
+        colecao_usuarios.insert_one({
+            'nome': nome,
+            'email': email,
+            'senha': senha
+        })
+
+        return jsonify({"mensagem": "Usuário cadastrado com sucesso."}), 201
+
+    except Exception as e:
+        print('❗ Erro no cadastro:', str(e))
+        return jsonify({"erro": "Erro ao cadastrar usuário."}), 500
+
+
+# Rota de login
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        dados = request.get_json()
+        email = dados.get('email')
+        senha = dados.get('senha')
+
+        usuario = colecao_usuarios.find_one({'email': email, 'senha': senha})
+        if usuario:
+            return jsonify({
+                "mensagem": "Login realizado com sucesso.",
+                "user_id": str(usuario["_id"]),
+                "nome": usuario["nome"]
+            })
+        else:
+            return jsonify({"erro": "Email ou senha incorretos."}), 401
+
+    except Exception as e:
+        print('❗ Erro no login:', str(e))
+        return jsonify({"erro": "Erro no login."}), 500
 
 
 # Inicia o servidor

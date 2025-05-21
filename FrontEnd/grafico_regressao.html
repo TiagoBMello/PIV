@@ -11,7 +11,7 @@
   <header class="header">
     <img src="images/lia.png" alt="Logo LIA" class="logo">
     <nav class="nav">
-      <button class="nav-button" onclick="window.location.href='planejamento.html'">⬅ Voltar</button>
+      <button class="nav-button" onclick="window.location.href='planejamento.html'">Voltar</button>
     </nav>
   </header>
 
@@ -31,76 +31,86 @@
   </footer>
 
   <script>
-     window.onload = () => {
+  window.onload = () => {
     const nomeSalvo = localStorage.getItem('metaParaGrafico');
     if (nomeSalvo) {
       document.getElementById('meta-input').value = nomeSalvo;
-      carregarGrafico(); // já carrega ao entrar
-      localStorage.removeItem('metaParaGrafico'); // limpa após usar
+      carregarGrafico();
+      localStorage.removeItem('metaParaGrafico');
     }
   };
 
-    async function carregarGrafico() {
-      const nome = document.getElementById('meta-input').value;
-      if (!nome) {
-        alert("⚠️ Informe o nome da meta!");
-        return;
-      }
+  async function carregarGrafico() {
+  const nome = document.getElementById('meta-input').value;
+  if (!nome) {
+    alert("⚠️ Informe o nome da meta!");
+    return;
+  }
 
-      const res = await fetch('http://localhost:5000/projecao', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: 'usuario123', nome })
-      });
+  const res = await fetch('http://localhost:5000/projecao', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: 'usuario123', nome })
+  });
 
-      const dados = await res.json();
-      if (!res.ok) {
-        alert(`❌ Erro: ${dados.erro}`);
-        return;
-      }
+  const dados = await res.json();
+  if (!res.ok) {
+    alert(`❌ Erro: ${dados.erro}`);
+    return;
+  }
 
-      const valores = Array.from({ length: dados.meses_estimados }, (_, i) => i + 1);
-      const y_real = [];
-      let acumulado = 0;
-      for (let i = 0; i < valores.length; i++) {
-        acumulado += dados.media_mensal;
-        y_real.push(acumulado);
-      }
+  const labelsCompletos = [...dados.labels, ...dados.labels_futuro];
+  const acumuladoReal = dados.acumulado;
+  const acumuladoPrevisto = [...new Array(dados.labels.length).fill(null), ...dados.acumulado_futuro];
 
-      const ctx = document.getElementById('graficoRegressao').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: valores,
-          datasets: [
-            {
-              label: 'Previsão de Crescimento',
-              data: y_real,
-              borderWidth: 2,
-              borderColor: '#006400',
-              backgroundColor: 'rgba(0, 100, 0, 0.1)',
-              tension: 0.3
-            }
-          ]
+  const ctx = document.getElementById('graficoRegressao').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labelsCompletos,
+      datasets: [
+        {
+          label: 'Aportes Reais',
+          data: acumuladoReal,
+          borderColor: '#006400',
+          backgroundColor: 'rgba(0, 100, 0, 0.1)',
+          tension: 0.3
         },
-        options: {
-          scales: {
-            x: {
-              title: { display: true, text: 'Meses' }
-            },
-            y: {
-              title: { display: true, text: 'Acumulado (R$)' }
-            }
-          },
-          plugins: {
-            title: {
-              display: true,
-              text: `Projeção para: ${nome}`
-            }
+        {
+          label: 'Projeção (Regressão Linear)',
+          data: acumuladoPrevisto,
+          borderDash: [10, 5],
+          borderColor: '#FFA500',
+          backgroundColor: 'rgba(255, 165, 0, 0.1)',
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      scales: {
+        x: {
+         title: { display: true, text: 'Meses' }
+        },
+
+        y: {
+          title: { display: true, text: 'Acumulado (R$)' }
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: `Projeção de Aportes para: ${nome}`
+        },
+        legend: {
+          labels: {
+            usePointStyle: true
           }
         }
-      });
+      }
     }
-  </script>
+  });
+}
+
+</script>
 </body>
 </html>

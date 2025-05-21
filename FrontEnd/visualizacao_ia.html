@@ -3,86 +3,138 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LIA - Dicas com IA</title>
+  <title>LIA - Visualização IA</title>
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <header class="header">
-    <img src="images/lia.png" alt="Logo LIA" class="logo">
-    <nav class="nav">
-      <button class="nav-button" onclick="window.location.href='investimentos.html'">Voltar</button>
-    </nav>
-  </header>
 
-  <main class="main-content">
-    <h1>💡 Dicas de Investimentos com IA</h1>
-    <p>Visualize como a IA agrupa os perfis de investidores com base nas respostas do quiz.</p>
+<header class="header">
+  <img src="images/lia.png" alt="Logo LIA" class="logo">
+  <nav class="nav">
+    <button class="nav-button" onclick="window.location.href='investimentos.html'">Voltar</button>
+  </nav>
+</header>
 
-    <section class="finance-section">
-      <button class="cta-button" onclick="mostrarGrafico()">📊 Ver Gráfico de IA</button>
-      <canvas id="graficoIA" style="display: none; max-width: 100%; margin-top: 30px;"></canvas>
-      <p id="mensagem-erro" style="color: red; margin-top: 20px;"></p>
-    </section>
-  </main>
+<main class="main-content">
+  <h1>💡 Dicas de Investimentos com IA</h1>
+  <p>Veja como a IA agrupa perfis de investidores com base nas respostas do quiz.</p>
 
-  <footer class="footer">
-    <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
-  </footer>
+  <section class="finance-section">
+    <button class="cta-button" onclick="mostrarGrafico()">📊 Ver Gráfico de IA</button>
+    <canvas id="graficoIA" style="display: none; max-width: 100%; margin-top: 30px;"></canvas>
+    <p id="mensagem-erro" style="color: red; margin-top: 20px;"></p>
+  </section>
 
-  <script>
-    async function mostrarGrafico() {
-      const canvas = document.getElementById('graficoIA');
-      const mensagem = document.getElementById('mensagem-erro');
-      canvas.style.display = 'block';
-      mensagem.textContent = '';
+  <!-- 🔥 Legenda explicativa -->
+  <section style="background: #f9f9f9; padding: 25px; border-radius: 15px; margin-top: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 900px; margin: auto;">
+    <h3 style="margin-bottom: 10px;">🔍 O que significa este gráfico?</h3>
+    <p style="line-height: 1.7;">
+      Cada bolinha representa um <strong>usuário que respondeu o quiz</strong>.
+      <br><br>
+      O gráfico foi gerado utilizando <strong>PCA (Análise de Componentes Principais)</strong>, que reduz as respostas de 6 perguntas para apenas 2 eixos:
+    </p>
+    <ul style="line-height: 1.7;">
+      <li>📈 <strong>Tendência de Perfil - Eixo 1:</strong> Direção que concentra a maior variação entre os perfis.</li>
+      <li>📊 <strong>Tendência de Perfil - Eixo 2:</strong> Segunda direção mais relevante, complementar ao Eixo 1.</li>
+    </ul>
+    <p style="line-height: 1.7;">
+      ⚠️ <strong>Importante:</strong> Esses números não representam uma nota ou pontuação específica, mas uma posição relativa no espaço dos perfis. Quanto mais próximos, mais semelhantes os perfis; quanto mais distantes, mais diferentes.
+    </p>
+  </section>
 
-      try {
-        const res = await fetch('http://localhost:5000/ia/visualizacao');
-        const dados = await res.json();
+</main>
 
-        if (!Array.isArray(dados) || dados.length === 0) {
-          mensagem.textContent = '⚠️ Nenhum dado disponível para exibir o gráfico.';
-          canvas.style.display = 'none';
-          return;
-        }
+<footer class="footer">
+  <p>&copy; 2025 LIA - Assistente Financeiro. Todos os direitos reservados.</p>
+</footer>
 
-        const cores = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'];
+<script>
+  async function mostrarGrafico() {
+    const canvas = document.getElementById('graficoIA');
+    const mensagem = document.getElementById('mensagem-erro');
+    canvas.style.display = 'block';
+    mensagem.textContent = '';
 
-        const agrupados = dados.reduce((acc, ponto) => {
-          const grupo = ponto.cluster;
-          if (!acc[grupo]) acc[grupo] = { x: [], y: [] };
-          acc[grupo].x.push(ponto.x);
-          acc[grupo].y.push(ponto.y);
-          return acc;
-        }, {});
+    try {
+      const res = await fetch('http://localhost:5000/dados_clusterizados');
+      const dados = await res.json();
 
-        const datasets = Object.entries(agrupados).map(([cluster, valores], i) => ({
-          label: `Cluster ${cluster}`,
-          data: valores.x.map((x, j) => ({ x, y: valores.y[j] })),
-          backgroundColor: cores[i % cores.length],
-          pointRadius: 6
-        }));
+      if (!Array.isArray(dados) || dados.length === 0) {
+        mensagem.textContent = '⚠️ Nenhum dado disponível para exibir o gráfico.';
+        canvas.style.display = 'none';
+        return;
+      }
 
-        new Chart(canvas, {
-          type: 'scatter',
-          data: { datasets },
-          options: {
-            plugins: {
-              legend: { position: 'bottom' },
-              title: { display: true, text: 'Distribuição dos Perfis (PCA + KMeans)' }
+      const cores = ['#1f77b4', '#ff7f0e', '#2ca02c'];
+
+      const agrupados = dados.reduce((acc, ponto) => {
+        const grupo = ponto.perfil;
+        if (!acc[grupo]) acc[grupo] = { x: [], y: [], respostas: [] };
+        acc[grupo].x.push(ponto.x);
+        acc[grupo].y.push(ponto.y);
+        acc[grupo].respostas.push(ponto.respostas || []);
+        return acc;
+      }, {});
+
+      const datasets = Object.entries(agrupados).map(([perfil, valores], i) => ({
+        label: `${perfil}`,
+        data: valores.x.map((x, j) => ({
+          x,
+          y: valores.y[j],
+          respostas: valores.respostas[j] || [],
+          perfil: perfil
+        })),
+        backgroundColor: cores[i % cores.length],
+        pointRadius: 6
+      }));
+
+      new Chart(canvas, {
+        type: 'scatter',
+        data: { datasets },
+        options: {
+          plugins: {
+            legend: { position: 'bottom' },
+            title: { display: true, text: 'Distribuição dos Perfis de Investidores (PCA + KMeans)' },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const ponto = context.raw;
+                  const respostas = ponto.respostas.length ? `Respostas: [${ponto.respostas.join(", ")}]` : '';
+                  const perfil = ponto.perfil ? `Perfil: ${ponto.perfil}` : '';
+                  return [
+                    `${perfil}`,
+                    `X: ${ponto.x.toFixed(2)}, Y: ${ponto.y.toFixed(2)}`,
+                    respostas
+                  ];
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Tendência de Perfil - Eixo 1' // ✔️ Nome atualizado
+              }
             },
-            scales: {
-              x: { title: { display: true, text: 'Componente 1' } },
-              y: { title: { display: true, text: 'Componente 2' } }
+            y: {
+              title: {
+                display: true,
+                text: 'Tendência de Perfil - Eixo 2' // ✔️ Nome atualizado
+              }
             }
           }
-        });
-      } catch (erro) {
-        mensagem.textContent = '❌ Erro ao buscar dados da IA.';
-        console.error('Erro ao buscar dados IA:', erro);
-      }
+        }
+      });
+
+    } catch (erro) {
+      mensagem.textContent = '❌ Erro ao buscar dados da IA.';
+      console.error('Erro ao buscar dados IA:', erro);
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>
+ 

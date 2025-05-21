@@ -1,43 +1,77 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LIA - Quiz do Perfil de Investidor</title>
+  <title>Quiz - Descubra seu Perfil de Investidor</title>
   <link rel="stylesheet" href="css/styles.css">
-  <style>
-    .quiz-container {
-      background-color: #fff;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 30px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    .quiz-container h2 {
-      margin-bottom: 15px;
-    }
-    .quiz-container select {
-      margin-bottom: 15px;
-      padding: 8px;
-      width: 100%;
-    }
-  </style>
 </head>
 <body>
+
   <header class="header">
     <img src="images/lia.png" alt="Logo LIA" class="logo">
     <nav class="nav">
-      <button class="nav-button" onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
+      <button class="nav-button" onclick="window.location.href='investimentos.html'">Voltar</button>
     </nav>
   </header>
 
   <main class="main-content">
     <h1>🧠 Descubra seu Perfil de Investidor</h1>
-    <p>Responda o quiz abaixo para que a LIA personalize as melhores dicas para você:</p>
+    <p>Responda o quiz abaixo para que a LIA personalize as melhores dicas de investimentos para você:</p>
 
-    <section class="quiz-container">
-      <div id="quizPerguntas"></div>
-      <button class="cta-button" onclick="enviarQuiz()">🚀 Enviar Respostas</button>
+    <section class="finance-section">
+      <form id="quizForm" onsubmit="enviarRespostas(event)">
+
+        <label>1. Qual seu nível de conhecimento em investimentos?</label>
+        <select id="q1" required>
+          <option value="">Selecione</option>
+          <option value="1">Iniciante (Nunca investi ou sei muito pouco)</option>
+          <option value="2">Intermediário (Tenho algum conhecimento e já investi)</option>
+          <option value="3">Avançado (Entendo bem e invisto frequentemente)</option>
+        </select>
+
+        <label>2. Como você reage às oscilações na bolsa de valores?</label>
+        <select id="q2" required>
+          <option value="">Selecione</option>
+          <option value="1">Fico muito desconfortável, prefiro segurança.</option>
+          <option value="2">Entendo que oscilações fazem parte, mas me preocupo um pouco.</option>
+          <option value="3">Vejo como oportunidades e não me preocupo.</option>
+        </select>
+
+        <label>3. Você prefere segurança ou retorno alto?</label>
+        <select id="q3" required>
+          <option value="">Selecione</option>
+          <option value="1">Prefiro segurança, mesmo com menor retorno.</option>
+          <option value="2">Aceito algum risco por melhores retornos.</option>
+          <option value="3">Busco sempre o maior retorno, aceitando riscos maiores.</option>
+        </select>
+
+        <label>4. Você se considera uma pessoa...</label>
+        <select id="q4" required>
+          <option value="">Selecione</option>
+          <option value="1">Muito conservadora com dinheiro.</option>
+          <option value="2">Equilibrada, pondero riscos e segurança.</option>
+          <option value="3">Agressiva, gosto de correr riscos para ganhar mais.</option>
+        </select>
+
+        <label>5. Você já investiu antes?</label>
+        <select id="q5" required>
+          <option value="">Selecione</option>
+          <option value="1">Nunca.</option>
+          <option value="2">Poucas vezes.</option>
+          <option value="3">Sim, invisto regularmente.</option>
+        </select>
+
+        <label>6. Como você lida com perdas temporárias?</label>
+        <select id="q6" required>
+          <option value="">Selecione</option>
+          <option value="1">Me incomodam muito, prefiro evitar.</option>
+          <option value="2">Se forem pequenas ou passageiras, aceito.</option>
+          <option value="3">Não me preocupo, faz parte do jogo.</option>
+        </select>
+
+        <button type="submit" class="cta-button">✅ Enviar Respostas</button>
+      </form>
     </section>
   </main>
 
@@ -46,39 +80,43 @@
   </footer>
 
   <script>
-    const perguntas = [
-      "Qual seu nível de conhecimento em investimentos?",
-      "Como você reage a oscilações na bolsa de valores?",
-      "Você prefere segurança ou retorno alto?",
-      "Qual seu horizonte de tempo para investir?",
-      "Você já investiu antes?",
-      "Como você lida com perdas temporárias?"
-    ];
+    async function enviarRespostas(event) {
+      event.preventDefault();
 
-    const quizContainer = document.getElementById("quizPerguntas");
-    perguntas.forEach((pergunta, index) => {
-      const div = document.createElement("div");
-      div.innerHTML = `
-        <label><strong>${index + 1}. ${pergunta}</strong></label>
-        <select id="resposta${index}">
-          <option value="1">1 - Pouco</option>
-          <option value="2">2 - Médio</option>
-          <option value="3">3 - Muito</option>
-        </select>
-      `;
-      quizContainer.appendChild(div);
-    });
+      const respostas = [
+        parseInt(document.getElementById('q1').value),
+        parseInt(document.getElementById('q2').value),
+        parseInt(document.getElementById('q3').value),
+        parseInt(document.getElementById('q4').value),
+        parseInt(document.getElementById('q5').value),
+        parseInt(document.getElementById('q6').value)
+      ];
 
-    function enviarQuiz() {
-      const respostas = [];
-      for (let i = 0; i < perguntas.length; i++) {
-        const valor = parseInt(document.getElementById(`resposta${i}`).value);
-        respostas.push(valor);
+      const user_id = "usuario123"; // ← depois substitui pelo id real do login
+
+      try {
+        const response = await fetch('http://localhost:5000/perfil', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id, respostas })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(`❌ Erro: ${data.erro}`);
+          return;
+        }
+
+        alert(`✅ Perfil identificado: ${data.perfil}\n\n${data.descricao}`);
+        window.location.href = 'dicas.html'; // Redireciona para a página de dicas
+
+      } catch (erro) {
+        console.error('Erro ao enviar respostas:', erro);
+        alert('❌ Erro ao enviar respostas. Verifique sua conexão com o backend.');
       }
-      localStorage.setItem('respostasQuiz', JSON.stringify(respostas));
-      alert("✅ Respostas salvas! Voltando para o dashboard");
-      window.location.href = "dashboard.html";
     }
   </script>
+
 </body>
 </html>
