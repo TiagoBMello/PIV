@@ -42,7 +42,8 @@ async function listarMetas() {
       const progresso = Math.min(100, (acumulado / meta.valor) * 100).toFixed(0);
 
       // Corrigir espaços no nome
-      const safeName = meta.nome.replace(/\s+/g, '_');
+      const safeName = meta.nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
+
 
       const div = document.createElement('div');
       div.className = 'meta-card';

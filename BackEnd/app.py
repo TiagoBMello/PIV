@@ -469,6 +469,37 @@ def login():
     except Exception as e:
         print('❗ Erro no login:', str(e))
         return jsonify({"erro": "Erro no login."}), 500
+    
+
+
+@app.route('/historico', methods=['POST'])
+def adicionar_ao_historico():
+    try:
+        dados = request.get_json()
+        user_id = dados.get("user_id")
+        nome = dados.get("nome")
+        valor = float(dados.get("valor"))
+
+        meta = colecao_metas.find_one({"user_id": user_id, "nome": nome})
+        if not meta:
+            return jsonify({"erro": "Meta não encontrada."}), 404
+
+        historico = meta.get("historico_aportes", [])
+        historico.append({
+            "valor": valor,
+            "data": datetime.utcnow().isoformat()
+        })
+
+        colecao_metas.update_one(
+            {"user_id": user_id, "nome": nome},
+            {"$set": {"historico_aportes": historico}}
+        )
+
+        return jsonify({"mensagem": "Aporte registrado no histórico."})
+    except Exception as e:
+        print('❗ Erro ao adicionar no histórico:', str(e))
+        return jsonify({"erro": str(e)}), 500
+
 
 
 # Inicia o servidor
