@@ -135,10 +135,21 @@ def calcular_perfil():
 
         kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
         kmeans.fit(X)
-        cluster = int(kmeans.predict([X[-1]])[0])
+        cluster_usuario = int(kmeans.predict([X[-1]])[0])
 
-        nomes = ["Conservador", "Moderado", "Agressivo"]
-        perfil_nome = nomes[cluster]
+        # 🔥 Mapear os clusters com base nos centróides
+        centroide_medias = kmeans.cluster_centers_.mean(axis=1)
+
+        # Ordenar do menor (conservador) para o maior (agressivo)
+        ordem_clusters = np.argsort(centroide_medias)
+
+        mapeamento = {
+            ordem_clusters[0]: "Conservador",
+            ordem_clusters[1]: "Moderado",
+            ordem_clusters[2]: "Agressivo"
+        }
+
+        perfil_nome = mapeamento[cluster_usuario]
         dados_perfil = dicas_personalizadas[perfil_nome]["base"]
         mensagem_extra = ""
 
@@ -158,6 +169,7 @@ def calcular_perfil():
     except Exception as e:
         print("❗ Erro interno:", str(e))
         return jsonify({'erro': 'Erro interno no servidor.'}), 500
+
 
 # Rota para adicionar nova meta
 @app.route('/metas', methods=['POST'])

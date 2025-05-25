@@ -203,6 +203,10 @@
           alert(`❌ Erro: ${data.erro}`);
           return;
         }
+        // 🔥 Salvar perfil no localStorage
+        localStorage.setItem('perfilInvestidor', JSON.stringify(data));
+        localStorage.setItem('respostasQuiz', JSON.stringify(respostas));
+
 
         alert(`✅ Perfil identificado: ${data.perfil}\n\n${data.descricao}`);
         window.location.href = 'investimentos.html'; // Redireciona para a página de dicas

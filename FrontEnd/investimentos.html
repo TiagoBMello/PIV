@@ -47,49 +47,41 @@
 
   <!-- Script de carregamento da dica -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      fetch('http://localhost:5000/perfil', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: 'usuario123',
-          respostas: JSON.parse(localStorage.getItem('respostasQuiz')) || []
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        const dicaResultado = document.getElementById("dicaResultado");
+  document.addEventListener("DOMContentLoaded", () => {
+    const perfil = JSON.parse(localStorage.getItem('perfilInvestidor'));
 
-        if (data.erro) {
-          dicaResultado.innerHTML = `
-            <p style="color: #d35400;">
-              ⚠️ Você ainda não respondeu o quiz para gerar as dicas. 
-              <a href='quiz.html' style="color: #006400; font-weight: bold;">Clique aqui para fazer</a>.
-            </p>`;
-          return;
-        }
+    const dicaResultado = document.getElementById("dicaResultado");
 
-        const linksHTML = data.links?.length
-          ? `<div class="useful-links">
-              <h4>📚 Conteúdos úteis:</h4>
-              ${data.links.map(link => `<a href="${link.url}" target="_blank">🔗 ${link.titulo}</a>`).join('')}
-            </div>` : '';
+    if (!perfil) {
+      dicaResultado.innerHTML = `
+        <p style="color: #d35400;">
+          ⚠️ Você ainda não respondeu o quiz para gerar as dicas. 
+          <a href='quiz.html' style="color: #006400; font-weight: bold;">Clique aqui para fazer</a>.
+        </p>`;
+      return;
+    }
 
-        dicaResultado.innerHTML = `
-          <div class="emoji">🎯</div>
-          <h3>Perfil: ${data.perfil}</h3>
-          <p>${data.descricao}</p>
-          <div class="investment-details">
-            <ul>
-              ${data.detalhes.map(item => `<li>📌 ${item}</li>`).join('')}
-            </ul>
-          </div>
-          ${data.extra ? `<div class="extra-info">🔎 ${data.extra}</div>` : ''}
-          ${linksHTML}
-        `;
-      });
-    });
-  </script>
+    const linksHTML = perfil.links?.length
+      ? `<div class="useful-links">
+          <h4>📚 Conteúdos úteis:</h4>
+          ${perfil.links.map(link => `<a href="${link.url}" target="_blank">🔗 ${link.titulo}</a>`).join('')}
+        </div>` : '';
+
+    dicaResultado.innerHTML = `
+      <div class="emoji">🎯</div>
+      <h3>Perfil: ${perfil.perfil}</h3>
+      <p>${perfil.descricao}</p>
+      <div class="investment-details">
+        <ul>
+          ${perfil.detalhes.map(item => `<li>📌 ${item}</li>`).join('')}
+        </ul>
+      </div>
+      ${perfil.extra ? `<div class="extra-info">🔎 ${perfil.extra}</div>` : ''}
+      ${linksHTML}
+    `;
+  });
+</script>
+
 
 </body>
 </html>
